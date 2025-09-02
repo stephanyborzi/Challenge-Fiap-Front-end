@@ -1,13 +1,18 @@
-import React, { useState } from 'react'
-import './App.css'
-import Login from './Components/Login/Login'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from "./pages/Login/Login.jsx";
+import Cadastro from "./pages/Cadastro/Cadastro.jsx";
 
-function App() {
 
+const App = () => {
   return (
-    <div className="App">
-      <Login />
-    </div>
-  )
-}
-export default App
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/cadastro" element={<Cadastro />} />
+      </Routes>
+    </Router>
+  );
+};
+
+export default App;

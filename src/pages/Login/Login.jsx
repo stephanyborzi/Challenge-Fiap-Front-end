@@ -15,7 +15,7 @@ const Login = () => {
     <div className="container">
       <form onSubmit={handleLogin} className="login-form">
         <img
-          src="src\Components\images\dasa_logo.png"
+          src="src\pages\images\dasa_logo.png"
           alt="Logo"
           className="logo"
         />
@@ -50,7 +50,7 @@ const Login = () => {
           <a href="#">Esqueci minha senha</a>
         </div>
 
-        {/* Botões com separador "ou" */}
+    
         <div className="button-group">
           <button type="submit">Entrar</button>
 
@@ -63,7 +63,7 @@ const Login = () => {
 
         <div className="register">
           <span>Não possui conta?</span>
-          <a href="#">Registre-se</a>
+          <a href="/cadastro">Registre-se</a>
         </div>
       </form>
     </div>
