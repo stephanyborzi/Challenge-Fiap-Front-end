@@ -23,7 +23,7 @@ const Cadastro = () => {
     <div className="container">
       <form onSubmit={handleCadastro} className="login-form">
         <img
-          src="src\pages\images\dasa_logo.png"
+          src="src\images\dasa_logo.png"
           alt="Logo"
           className="logo"
         />
@@ -84,9 +84,9 @@ const Cadastro = () => {
             Aceito os termos e políticas de privacidade
           </label>
         </div>
-        
-        <button type="submit">Cadastrar</button>
-
+        <nav>
+          <a href="/login" className="btn-link">Cadastrar</a>
+      </nav>
         <div className="register">
           <span>Já tem uma conta?</span>
           <a href="/login">Entrar</a>

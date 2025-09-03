@@ -1,3 +1,9 @@
+/*
+ * General Styles & Typography
+ *
+ * Sets up basic page styles and global typography.
+ * Uses a consistent naming convention for classes.
+*/
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 body {
@@ -31,7 +37,7 @@ body {
 
 .logo {
   width: 60px;
-  height: 60px;
+  height: 50px;
   margin-bottom: 10px;
 }
 
@@ -39,18 +45,16 @@ h1 {
   font-size: 24px;
   font-weight: 700;
   color: #333;
-  margin-bottom: 5px;
+  margin: 0 0 5px;
 }
 
 h3 {
   font-size: 14px;
   font-weight: 400;
   color: #666;
-  margin-top: 0;
-  margin-bottom: 25px;
+  margin: 0 0 25px;
 }
 
-/* Campos de input */
 .input-field-group {
   display: flex;
   gap: 15px;
@@ -59,8 +63,17 @@ h3 {
 
 .input-field {
   position: relative;
-  margin-bottom: 15px;
   width: 100%;
+  margin-bottom: 15px;
+}
+
+.input-field label {
+  display: block;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 5px;
+  font-weight: 500;
+  text-align: left; 
 }
 
 .input-field input,
@@ -88,22 +101,10 @@ h3 {
   color: #999;
 }
 
-.input-field.select-field {
-  text-align: left;
-}
-
-.input-field label {
-  display: block;
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 5px;
-  font-weight: 500;
-}
-
-.input-field select {
-  appearance: none; 
+.input-field.select-field select {
   -webkit-appearance: none;
   -moz-appearance: none;
+  appearance: none;
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6"><path fill="%23999" d="M5 6L0 0h10z"/></svg>');
   background-repeat: no-repeat;
   background-position: right 15px center;
@@ -167,8 +168,6 @@ h3 {
 .capture-button:hover {
   background-color: #f8f8f8;
 }
-
-/* Checkbox e link */
 .recall-forget {
   display: flex;
   align-items: center;
@@ -187,8 +186,8 @@ h3 {
   margin-right: 8px;
 }
 
-/* Botão de cadastro */
-.login-form button[type="submit"] {
+.login-form button[type="submit"],
+.btn-link {
   width: 100%;
   padding: 12px;
   background-color: #2c3e50; 
@@ -199,9 +198,15 @@ h3 {
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
+  
+  display: inline-block; 
+  text-align: center;
+  text-decoration: none; 
+  box-sizing: border-box; 
 }
 
-.login-form button[type="submit"]:hover {
+.login-form button[type="submit"]:hover,
+.btn-link:hover {
   background-color: #1a242f;
 }
 

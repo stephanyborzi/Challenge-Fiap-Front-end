@@ -15,7 +15,7 @@ const Login = () => {
     <div className="container">
       <form onSubmit={handleLogin} className="login-form">
         <img
-          src="src\pages\images\dasa_logo.png"
+          src="src\images\dasa_logo.png"
           alt="Logo"
           className="logo"
         />
@@ -49,11 +49,10 @@ const Login = () => {
           </label>
           <a href="#">Esqueci minha senha</a>
         </div>
-
-    
         <div className="button-group">
-          <button type="submit">Entrar</button>
-
+          <nav>
+          <a href="/dashboard" className="btn-link">Cadastrar</a>
+        </nav>
           <div className="separator">ou</div>
 
           <button type="button" className="face-login">
