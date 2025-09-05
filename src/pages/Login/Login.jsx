@@ -59,7 +59,6 @@ const Login = () => {
             <FaSmile className="icon" /> Entrar com Reconhecimento Facial
           </button>
         </div>
-
         <div className="register">
           <span>Não possui conta?</span>
           <a href="/cadastro">Registre-se</a>
