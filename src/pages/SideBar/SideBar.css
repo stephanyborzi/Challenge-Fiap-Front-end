@@ -46,6 +46,7 @@ ul {
   font-weight: bold;
   padding: 10px 20px;
   margin-left: 20px;
+  color:var(--background-card);
 }
 
 .sidebar .nav-menu {
