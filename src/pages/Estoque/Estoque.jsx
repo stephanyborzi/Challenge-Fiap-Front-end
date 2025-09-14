@@ -1,28 +1,11 @@
 import React from 'react';
 import './Estoque.css'; 
+import SideBar from '../SideBar/SideBar';
 
 const Estoque = () => {
   return (
     <div className="dashboard-container">
-      <aside className="sidebar">
-        <img src="src\images\dasa_logo.png"alt="Logo" className="logo-image" />
-        <div className="logo">StockManager</div>1
-        <nav className="nav-menu">
-            <ul>
-            <li className="active"><a href="#">Dashboard</a></li>
-            <li><a href="/estoque">Estoque</a></li>
-            <li><a href="/funcionarios">Funcionários</a></li>
-            <li><a href="/reconhecimentofacial">Reconhecimento Facial</a></li>
-            <li><a href="/movimentacoes">Movimentações</a></li>
-            <li><a href="/relatorios">Relatórios</a></li>
-            </ul>
-        </nav>
-        <div className="user-profile">
-            <img src="/images/user-image.png" alt="User" />
-            <span>João Silva</span>
-            <small>Administrador</small>
-        </div>
-        </aside>
+      < SideBar />
       <main className="main-content">
         <header className="main-header">
           <h1>Estoque</h1>

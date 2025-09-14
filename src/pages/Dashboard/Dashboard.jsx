@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css'; 
+import SideBar from '../SideBar/SideBar';
 import { LayoutDashboard, Boxes, Users, ScanFace, RefreshCw, BarChart2, Package, AlertTriangle, UserCheck, Activity, User, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -59,31 +60,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <aside className="sidebar">
-        <img src="src\\images\\dasa_logo.png" alt="Logo" className="logo-image" />
-        <div className="logo">StockManager</div>
-        <nav className="nav-menu">
-          <ul>
-            <li className="active"><a href="#"><LayoutDashboard size={18} /> Dashboard</a></li>
-            <li><a href="/estoque"><Boxes size={18} /> Estoque</a></li>
-            <li><a href="/funcionarios"><Users size={18} /> Funcionários</a></li>
-            <li><a href="/reconhecimentofacial"><ScanFace size={18} /> Reconhecimento Facial</a></li>
-            <li><a href="/movimentacoes"><RefreshCw size={18} /> Movimentações</a></li>
-            <li><a href="/relatorios"><BarChart2 size={18} /> Relatórios</a></li>
-          </ul>
-        </nav>
-        <div className="user-profile">
-          <User size={40} />
-          <div className="user-info">
-            <span>João Silva</span>
-            <small>Administrador</small>
-          </div>
-          <Link to="/perfil" className="settings-link">
-            <Settings size={24} />
-          </Link>
-        </div>
-      </aside>
-
+      <SideBar />
       <main className="main-content">
         <header className="main-header">
           <h1>Dashboard</h1>

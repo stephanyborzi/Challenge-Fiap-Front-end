@@ -1,0 +1,105 @@
+:root {
+  --primary-color: #04043c; 
+  --secondary-color: #3498db; 
+  --background-light: #f4f7f9; 
+  --background-card: #ffffff; 
+  --text-muted: #7f8c8d;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-light);
+  color: var(--text-dark);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-image {
+  display: block;      
+  width: 120px;
+  height: auto;
+  margin: 0 auto 20px; 
+}
+
+.sidebar .logo {
+  font-size: 24px;
+  font-weight: bold;
+  padding: 10px 20px;
+  margin-left: 20px;
+}
+
+.sidebar .nav-menu {
+  flex-grow: 1;
+}
+
+.sidebar .nav-menu li a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 25px;
+  transition: background-color 0.3s, padding-left 0.3s;
+}
+
+.sidebar .nav-menu li:hover a,
+.sidebar .nav-menu li.active a {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-left: 4px solid var(--secondary-color);
+  padding-left: 21px; 
+}
+
+.sidebar .nav-menu svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+.sidebar .user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar .user-profile img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.sidebar .user-profile svg {
+  width: 22px;
+  height: 22px;
+  color: var(--secondary-color);
+}
+
+.sidebar .user-profile span {
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sidebar .user-profile small {
+  color: var(--text-muted);
+  font-size: 12px;
+}
