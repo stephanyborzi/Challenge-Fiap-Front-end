@@ -1,6 +1,7 @@
 import { FaUser, FaLock, FaSmile, FaCamera } from "react-icons/fa";
 import "./Cadastro.css";
 import { useState } from "react";
+import CadastroService from "./CadastroService";
 
 const Cadastro = () => {
   const [nome, setNome] = useState("");
@@ -10,13 +11,42 @@ const Cadastro = () => {
   const [senha, setSenha] = useState("");
   const [cargo, setCargo] = useState(""); 
   const [aceitouTermos, setAceitouTermos] = useState(false); 
-  const handleCadastro = (event) => {
-    event.preventDefault();
-    if (!aceitouTermos) {
-      alert("Você deve aceitar os termos e políticas de privacidade.");
-      return;
+
+  async function cadastro(data) {
+    try {
+      const response = await CadastroService.cadastro(data);
+      if (response.code === 201) {
+        console.log("Cadastro successful:", response);
+        return true;
+      }
+    } catch (error) {
+      alert("Erro ao cadastrar");
+      console.error("Cadastro failed");
+      return false;
     }
-    alert(`Dados enviados:\nNome: ${nome}\nSobrenome: ${sobrenome}\nEmail: ${email}\nUsuario: ${usuario}\nCargo: ${cargo}\nAceitou Termos: ${aceitouTermos}`);
+  }
+
+  async function handleCadastro (event) {
+    if (nome ==="" || sobrenome ==="" || email ==="" || usuario ==="" || senha ==="" || cargo ==="") {
+      alert("Por favor, preencha todos os campos obrigatórios.");
+    } else if (!aceitouTermos) {
+      alert("Você deve aceitar os termos e políticas de privacidade.");
+    } else {
+      const data = {
+        nome,
+        sobrenome,
+        email,
+        usuario,
+        senha,
+        cargo
+      }
+      const result = cadastro(data);
+      if (result) {
+        window.location.href = "/login";
+        alert("Cadastro realizado com sucesso! Por favor, faça o login.");
+      }
+    }
+    return;
   };
 
   return (
@@ -85,7 +115,7 @@ const Cadastro = () => {
           </label>
         </div>
         <nav>
-          <a href="/login" className="btn-link">Cadastrar</a>
+          <a onClick={(e) => handleCadastro()} className="btn-link">Cadastrar</a>
       </nav>
         <div className="register">
           <span>Já tem uma conta?</span>
