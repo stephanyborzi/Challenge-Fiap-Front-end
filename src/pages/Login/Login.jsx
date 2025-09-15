@@ -1,15 +1,27 @@
 import { FaUser, FaLock, FaSmile } from "react-icons/fa";
 import "./Login.css";
 import { useState } from "react";
+import LoginService from "./LoginService";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (event) => {
-    event.preventDefault(); 
-    alert(`Enviando os dados:\nUsername: ${username}\nPassword: ${password}`);
-  };
+  async function handleLogin(event) {
+    event.preventDefault();
+    console.log("Attempting login with:", { username, password });
+    try {
+      const result = await LoginService.login(username, password);
+
+      if (result.authenticated) {
+        console.log("Login successful:", result);
+        window.location.href = "/dashboard";
+        return;
+      }
+    } catch (err) {
+      console.error("Error during login:", err);
+    }
+  }
 
   return (
     <div className="container">
@@ -51,7 +63,7 @@ const Login = () => {
         </div>
         <div className="button-group">
           <nav>
-          <a href="/dashboard" className="btn-link">Cadastrar</a>
+          <a onClick={(e) => handleLogin(e)} className="btn-link">Logar</a>
         </nav>
           <div className="separator">ou</div>
 
