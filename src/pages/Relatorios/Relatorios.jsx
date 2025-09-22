@@ -1,236 +1,448 @@
-import React from 'react';
-import SideBar from '../SideBar/SideBar'; 
-import './Relatorios.css'; 
+import React, { useState, useEffect } from 'react';
+import SideBar from '../SideBar/SideBar';
+import './Relatorios.css';
+import { fakeData } from '../../fakeApiData/apiData';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 const Relatorios = () => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [selectedCategory, setSelectedCategory] = useState('Todos');
+  const [selectedMonth, setSelectedMonth] = useState('Outubro');
+  const [selectedYear, setSelectedYear] = useState('2025');
+  
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => {
+      try {
+        if (!fakeData) {
+          throw new Error('Dados não encontrados.');
+        }
+        setData(fakeData);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const formatCurrency = (value) => {
+    if (typeof value !== 'number') return 'R$ 0,00';
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+  };
+
+  const formatDate = (isoString) => {
+    if (!isoString) return 'N/A';
+    const date = new Date(isoString);
+    return date.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value);
+  };
+
+  const handleMonthChange = (event) => {
+    setSelectedMonth(event.target.value);
+  };
+
+  const handleYearChange = (event) => {
+    setSelectedYear(event.target.value);
+  };
+
+  const exportToCSV = (data, headers, filename) => {
+    const csvContent = [
+      headers.join(';'),
+      ...data.map(row => row.map(item => `"${item}"`).join(';'))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportExpenseForecast = () => {
+    const headers = ['Mês', 'Valor'];
+    const dataRows = expenseForecast.map(item => [item.month, formatCurrency(item.value)]);
+    exportToCSV(dataRows, headers, 'previsao_gastos_completa.csv');
+  };
+
+  const exportStockItems = () => {
+    const headers = ['ID', 'Nome do Item', 'Categoria', 'Estoque Atual', 'Valor Unitário', 'Valor Total', 'Localização'];
+    const dataRows = stockItems.map(item => [
+      item.productId,
+      item.name,
+      item.category,
+      item.currentStock,
+      formatCurrency(item.unitPrice),
+      formatCurrency(item.currentStock * item.unitPrice),
+      item.location
+    ]);
+    exportToCSV(dataRows, headers, 'itens_em_estoque.csv');
+  };
+
+  const exportMovements = () => {
+    const headers = ['ID', 'Produto', 'Tipo', 'Quantidade', 'Valor', 'Data', 'Motivo', 'Responsável', 'Fornecedor'];
+    const dataRows = filteredMovements.map(movement => {
+      const item = stockItems.find(i => i.productId === movement.productId);
+      const itemName = item?.name || 'N/A';
+      const movementValue = item ? movement.quantity * item.unitPrice : 0;
+      const supplierName = movement.supplier ? suppliers.find(s => s.supplierId === movement.supplier)?.name : 'N/A';
+      return [
+        movement.movementId,
+        itemName,
+        movement.type,
+        movement.quantity,
+        formatCurrency(movementValue),
+        formatDate(movement.date),
+        movement.reason,
+        movement.responsible,
+        supplierName
+      ];
+    });
+    exportToCSV(dataRows, headers, 'historico_movimentacoes.csv');
+  };
+
+  const exportToPDF = (tableId, filename) => {
+    const input = document.getElementById(tableId);
+    if (!input) {
+      console.error(`Element with id "${tableId}" not found.`);
+      return;
+    }
+
+    html2canvas(input, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+      pdf.save(filename);
+    });
+  };
+    if (loading) {
     return (
-        <div className="dashboard-container">
-            <SideBar />
-            <main className="relatorios-main-content">
-                <header className="relatorios-header">
-                    <div className="relatorios-title-group">
-                        <p>Geração e exportação de relatórios detalhados</p>
-                    </div>
-                    <div className="header-actions">
-                        <button className="icon-button notification-button">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                                <path d="M13.73 21a2 2 0 1 1-3.46 0"></path>
-                            </svg>
-                            Notificações
-                        </button>
-                        <button className="icon-button user-profile-button">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                            Admin User
-                        </button>
-                    </div>
-                </header>
-
-                <section className="filters-section">
-                    <div className="filter-group">
-                        <div className="filter-item">
-                            <label htmlFor="period">Filtros de Relatório</label>
-                            <select id="period">
-                                <option>Último mês</option>
-                                <option>Última semana</option>
-                                <option>Último ano</option>
-                            </select>
-                        </div>
-                        <div className="filter-item">
-                            <label htmlFor="category">Categoria</label>
-                            <select id="category">
-                                <option>Todas</option>
-                                <option>Medicamentos</option>
-                                <option>Equipamentos</option>
-                            </select>
-                        </div>
-                        <div className="filter-item">
-                            <label htmlFor="report-type">Tipo de Relatório</label>
-                            <select id="report-type">
-                                <option>Estoque Atual</option>
-                                <option>Movimentações</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div className="filter-buttons">
-                        <button className="filter-button">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-                            </svg>
-                            Filtros
-                        </button>
-                        <button className="export-button">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            Exportar Tudo
-                        </button>
-                        <button className="apply-button">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"></path>
-                                <path d="M8 12l2.67 2.67L16 9"></path>
-                            </svg>
-                            Aplicar
-                        </button>
-                    </div>
-                </section>
-
-                <section className="report-cards-section">
-                    <div className="report-card">
-                        <div className="report-card-header">
-                            <h3>Relatório de Estoque</h3>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M18 10h-1.26a2 2 0 0 0-1.74 1.25L14 14l-1.25-2.75A2 2 0 0 0 11.01 10H10a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zM4 14a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2zM20 14a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2z"></path>
-                            </svg>
-                        </div>
-                        <p className="subtitle">Situação atual do estoque com itens em baixa</p>
-                        <div className="report-stats">
-                            <div>
-                                <h4>Total de itens:</h4>
-                                <span className="value">1,247</span>
-                            </div>
-                            <div>
-                                <h4>Baixo estoque:</h4>
-                                <span className="value">23</span>
-                            </div>
-                            <div>
-                                <h4>Valor total:</h4>
-                                <span className="value">R$ 89,340</span>
-                            </div>
-                        </div>
-                        <div className="report-actions">
-                            <button><img src="/excel_icon.png" alt="Excel" /> Excel</button>
-                            <button><img src="/txt_icon.png" alt="TXT" /> TXT</button>
-                        </div>
-                    </div>
-                    <div className="report-card">
-                        <div className="report-card-header">
-                            <h3>Relatório Financeiro</h3>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M18 20V10M12 20V4M6 20V14"></path>
-                            </svg>
-                        </div>
-                        <p className="subtitle">Gastos e movimentação financeira</p>
-                        <div className="report-stats">
-                            <div>
-                                <h4>Gastos do mês:</h4>
-                                <span className="value">R$ 12,850</span>
-                            </div>
-                            <div>
-                                <h4>Economia:</h4>
-                                <span className="value">R$ 2,340</span>
-                            </div>
-                            <div>
-                                <h4>Previsão próx. mês:</h4>
-                                <span className="value">R$ 14,200</span>
-                            </div>
-                        </div>
-                        <div className="report-actions">
-                            <button><img src="/excel_icon.png" alt="Excel" /> Excel</button>
-                            <button><img src="/txt_icon.png" alt="TXT" /> TXT</button>
-                        </div>
-                    </div>
-                </section>
-
-                <section className="predictions-section">
-                    <h2>Previsões e Análises</h2>
-                    <div className="predictions-cards-container">
-                        <div className="prediction-card full-width">
-                            <div className="card-header">
-                                <h3>Previsão de Gastos - Próximos 6 Meses</h3>
-                            </div>
-                            <div className="prediction-item">
-                                <span className="month">Janeiro 2025</span>
-                                <span className="value-p">R$ 14,200</span>
-                            </div>
-                            <div className="prediction-item">
-                                <span className="month">Fevereiro 2025</span>
-                                <span className="value-p">R$ 13,800</span>
-                            </div>
-                            <div className="prediction-item">
-                                <span className="month">Março 2025</span>
-                                <span className="value-p">R$ 15,100</span>
-                            </div>
-                            <button className="export-full-button">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                    <polyline points="7 10 12 15 17 10"></polyline>
-                                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                                </svg>
-                                Exportar Previsão Completa
-                            </button>
-                        </div>
-                        <div className="prediction-card">
-                            <div className="card-header">
-                                <h3>Próximas Compras Sugeridas</h3>
-                            </div>
-                            <div className="suggestion-item">
-                                <div className="item-info">
-                                    <span className="item-name">Dipirona 500mg</span>
-                                    <span className="item-details">Estoque atual: 12 unidades</span>
-                                    <span className="item-details">Sugestão compra: 500 unidades</span>
-                                    <span className="item-details">Valor estimado: R$ 850</span>
-                                </div>
-                                <span className="urgency urgent">Urgente</span>
-                            </div>
-                            <div className="suggestion-item">
-                                <div className="item-info">
-                                    <span className="item-name">Seringas 10ml</span>
-                                    <span className="item-details">Estoque atual: 45 unidades</span>
-                                    <span className="item-details">Sugestão compra: 200 unidades</span>
-                                    <span className="item-details">Valor estimado: R$ 340</span>
-                                </div>
-                                <span className="urgency medium">Médio</span>
-                            </div>
-                            <button className="view-list-button">Ver Lista Completa</button>
-                        </div>
-                    </div>
-                </section>
-
-                <section className="export-options-section">
-                    <h2>Opções de Exportação</h2>
-                    <div className="export-cards-container">
-                        <div className="export-card">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                <line x1="10" y1="9" x2="8" y2="9"></line>
-                            </svg>
-                            <h3>Excel Completo</h3>
-                            <p>Todos os dados em planilha</p>
-                        </div>
-                        <div className="export-card">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            <h3>Arquivo TXT</h3>
-                            <p>Dados em texto simples</p>
-                        </div>
-                        <div className="export-card">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                <line x1="10" y1="9" x2="8" y2="9"></line>
-                            </svg>
-                            <h3>Relatório PDF</h3>
-                            <p>Documento formatado</p>
-                        </div>
-                    </div>
-                </section>
-            </main>
+        <div className="relatorios-page">
+        <SideBar />
+        <div className="relatorios-content-wrapper">
+            <div className="loading-state-modern">
+            <div className="loading-spinner"></div>
+            <p className="loading-message">Carregando relatórios...</p>
+            <p className="loading-sub-message">Aguarde um momento, estamos organizando os dados para você. ⏳</p>
+            </div>
+        </div>
         </div>
     );
+    }
+  if (error) {
+    return (
+      <div className="relatorios-page">
+        <SideBar />
+        <div className="relatorios-content-wrapper">
+          <div className="error-state">Erro: {error}</div>
+        </div>
+      </div>
+    );
+  }
+
+  const {
+    stockItems,
+    stockMovements,
+    expenseForecast,
+    suppliers
+  } = data;
+
+  const getMonthsAndYears = (movements) => {
+    const dates = movements.map(m => new Date(m.date));
+    const months = [...new Set(dates.map(d => d.toLocaleString('default', { month: 'long' })))].sort((a, b) => {
+      const monthOrder = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+      return monthOrder.indexOf(a.toLowerCase()) - monthOrder.indexOf(b.toLowerCase());
+    });
+    const years = [...new Set(dates.map(d => d.getFullYear().toString()))].sort();
+    return { months, years };
+  };
+
+  const { months, years } = getMonthsAndYears(stockMovements);
+
+  const filteredMovements = stockMovements.filter(movement => {
+    const item = stockItems.find(i => i.productId === movement.productId);
+    const movementDate = new Date(movement.date);
+    const movementMonth = movementDate.toLocaleString('default', { month: 'long' });
+    const movementYear = movementDate.getFullYear().toString();
+
+    const matchesCategory = selectedCategory === 'Todos' || (item && item.category === selectedCategory);
+    const matchesMonth = selectedMonth === 'Todos' || movementMonth.toLowerCase() === selectedMonth.toLowerCase();
+    const matchesYear = selectedYear === 'Todos' || movementYear === selectedYear;
+
+    return matchesCategory && matchesMonth && matchesYear;
+  });
+
+  const inventorySummaryFiltered = (() => {
+    const stockMap = {};
+
+    stockItems.forEach(item => {
+        stockMap[item.productId] = {
+          ...item,
+          currentStock: 0
+        };
+    });
+
+    filteredMovements.forEach(movement => {
+        const item = stockMap[movement.productId];
+        if (item) {
+          if (movement.type === 'entrada') {
+              item.currentStock += movement.quantity;
+          } else if (movement.type === 'saida') {
+              item.currentStock -= movement.quantity;
+          }
+        }
+    });
+
+    const totalItems = Object.values(stockMap).reduce((acc, item) => acc + item.currentStock, 0);
+    const lowStockItems = Object.values(stockMap).filter(item => item.currentStock > 0 && item.currentStock <= item.minStock).length;
+    const outOfStockItems = Object.values(stockMap).filter(item => item.currentStock === 0).length;
+    const totalValue = Object.values(stockMap).reduce((acc, item) => acc + (item.currentStock * item.unitPrice), 0);
+
+    return { totalItems, lowStockItems, outOfStockItems, totalValue };
+  })();
+
+  const financialSummaryFiltered = {
+    monthlyExpenses: filteredMovements.filter(m => m.type === 'saida').reduce((acc, movement) => {
+      const item = stockItems.find(i => i.productId === movement.productId);
+      return acc + (item ? movement.quantity * item.unitPrice : 0);
+    }, 0),
+  };
+  
+  return (
+    <div className="relatorios-page">
+      <SideBar />
+      <div className="relatorios-content-wrapper">
+        <header className="relatorios-header">
+          <div className="relatorios-title-group">
+            <h1 className='main-title'>Relatórios</h1>
+            <p>Geração e exportação de relatórios detalhados</p>
+          </div>
+        </header>
+
+        <main className="relatorios-main-content">
+          <section className="filters-section card">
+            <div className="filter-group">
+              <div className="filter-item">
+                <label htmlFor="category-filter">Filtrar por Categoria</label>
+                <select id="category-filter" value={selectedCategory} onChange={handleCategoryChange}>
+                  <option value="Todos">Todos</option>
+                  <option value="Medicamentos">Medicamentos</option>
+                  <option value="Materiais de Enfermagem">Materiais de Enfermagem</option>
+                  <option value="Materiais de Escritório">Materiais de Escritório</option>
+                </select>
+              </div>
+              <div className="filter-item">
+                <label htmlFor="month-filter">Filtrar por Mês</label>
+                <select id="month-filter" value={selectedMonth} onChange={handleMonthChange}>
+                  <option value="Todos">Todos</option>
+                  {months.map(month => (
+                    <option key={month} value={month}>{month}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="filter-item">
+                <label htmlFor="year-filter">Filtrar por Ano</label>
+                <select id="year-filter" value={selectedYear} onChange={handleYearChange}>
+                  <option value="Todos">Todos</option>
+                  {years.map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <section className="report-cards-section">
+            <div className="report-card card">
+              <div className="report-card-header">
+                <h3>Resumo de Estoque ({selectedCategory})</h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 10h-1.26a2 2 0 0 0-1.74 1.25L14 14l-1.25-2.75A2 2 0 0 0 11.01 10H10a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zM4 14a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2zM20 14a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2z"></path>
+                </svg>
+              </div>
+              <p className="subtitle">Situação do estoque em {selectedMonth} de {selectedYear}.</p>
+              <div className="report-stats">
+                <div>
+                  <h4>Total de itens:</h4>
+                  <span className="value">{inventorySummaryFiltered.totalItems.toLocaleString()}</span>
+                </div>
+                <div>
+                  <h4>Baixo estoque:</h4>
+                  <span className="value">{inventorySummaryFiltered.lowStockItems}</span>
+                </div>
+                <div>
+                  <h4>Valor total:</h4>
+                  <span className="value">{formatCurrency(inventorySummaryFiltered.totalValue)}</span>
+                </div>
+                <div>
+                  <h4>Itens sem estoque:</h4>
+                  <span className="value">{inventorySummaryFiltered.outOfStockItems}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="report-card card">
+              <div className="report-card-header">
+                <h3>Resumo Financeiro ({selectedCategory})</h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 20V10M12 20V4M6 20V14"></path>
+                </svg>
+              </div>
+              <p className="subtitle">Gastos do mês de {selectedMonth} de {selectedYear}</p>
+              <div className="report-stats">
+                <div>
+                  <h4>Gastos do período:</h4>
+                  <span className="value">{formatCurrency(financialSummaryFiltered.monthlyExpenses)}</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="predictions-section">
+            <h2>Previsões e Análises</h2>
+            <div className="predictions-cards-container">
+              <div className="prediction-card card">
+                <div className="card-header">
+                  <h3>Previsão de Gastos - Próximos 6 Meses</h3>
+                </div>
+                {expenseForecast.map((item, index) => (
+                  <div className="prediction-item" key={index}>
+                    <span className="month">{item.month}</span>
+                    <span className="value-p">{formatCurrency(item.value)}</span>
+                  </div>
+                ))}
+                <button className="export-full-button" onClick={exportExpenseForecast}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  Exportar Previsão Completa
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section className="detailed-reports-section">
+            <h2>Relatórios Detalhados</h2>
+
+            <div className="detailed-report-table card" id="stock-items-table">
+              <div className="table-header">
+                <h3>Itens em Estoque</h3>
+                <div className="header-actions">
+                  <button className="export-table-btn" onClick={exportStockItems}>Exportar itens em Estoque </button>
+                </div>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nome do Item</th>
+                    <th>Categoria</th>
+                    <th>Estoque Atual</th>
+                    <th>Valor Unitário</th>
+                    <th>Valor Total</th>
+                    <th>Localização</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stockItems.map(item => (
+                    <tr key={item.productId}>
+                      <td>{item.productId}</td>
+                      <td>{item.name}</td>
+                      <td>{item.category}</td>
+                      <td>{item.currentStock}</td>
+                      <td>{formatCurrency(item.unitPrice)}</td>
+                      <td>{formatCurrency(item.currentStock * item.unitPrice)}</td>
+                      <td>{item.location}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="detailed-report-table card mt-4" id="movements-table">
+              <div className="table-header">
+                <h3>Histórico de Movimentações</h3>
+                <div className="table-actions">
+                  <button className="export-table-btn" onClick={exportMovements}>Exportar CSV</button>
+                </div>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Produto</th>
+                    <th>Tipo</th>
+                    <th>Quantidade</th>
+                    <th>Valor do Movimento</th>
+                    <th>Data</th>
+                    <th>Motivo</th>
+                    <th>Responsável</th>
+                    <th>Fornecedor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredMovements.map(movement => {
+                    const item = stockItems.find(i => i.productId === movement.productId);
+                    const itemName = item?.name || 'N/A';
+                    const movementValue = item ? movement.quantity * item.unitPrice : 0;
+                    const supplierName = movement.supplier ? suppliers.find(s => s.supplierId === movement.supplier)?.name : 'N/A';
+                    return (
+                      <tr key={movement.movementId}>
+                        <td>{movement.movementId}</td>
+                        <td>{itemName}</td>
+                        <td><span className={`movement-type ${movement.type}`}>{movement.type}</span></td>
+                        <td>{movement.quantity}</td>
+                        <td>{formatCurrency(movementValue)}</td>
+                        <td>{formatDate(movement.date)}</td>
+                        <td>{movement.reason}</td>
+                        <td>{movement.responsible || 'N/A'}</td>
+                        <td>{supplierName}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  );
 };
 
 export default Relatorios;

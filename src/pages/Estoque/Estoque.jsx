@@ -1,6 +1,34 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import './Estoque.css';
 import SideBar from '../SideBar/SideBar';
+
+// Componente Counter
+const Counter = ({ end, duration = 2000 }) => {
+  const [value, setValue] = useState(0);
+  const animationFrameId = useRef(null);
+
+  useEffect(() => {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      setValue(Math.floor(progress * end));
+      if (progress < 1) {
+        animationFrameId.current = requestAnimationFrame(step);
+      }
+    };
+    
+    animationFrameId.current = requestAnimationFrame(step);
+
+    return () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    };
+  }, [end, duration]);
+
+  return <h2>{value.toLocaleString()}</h2>;
+};
 
 const Estoque = () => {
     const allMedicines = [
@@ -126,6 +154,11 @@ const Estoque = () => {
         return pageNumbers;
     };
 
+    const totalItems = filteredAndSortedMedicines.length;
+    const itemsVencemEmBreve = filteredAndSortedMedicines.filter(m => m.status === 'Vencem em breve').length;
+    const itemsEstoqueBaixo = filteredAndSortedMedicines.filter(m => m.status === 'Estoque baixo').length;
+    const totalValue = 45800; // Valor fixo para o exemplo
+
     return (
         <div className="dashboard-container">
             <SideBar />
@@ -156,7 +189,8 @@ const Estoque = () => {
                         </svg>
                         <div>
                             <h3>Total de Itens</h3>
-                            <h2>{filteredAndSortedMedicines.length}</h2>
+                            {/* Uso do componente Counter */}
+                            <Counter end={totalItems} duration={500} />
                             <p>Em estoque</p>
                         </div>
                     </div>
@@ -168,7 +202,8 @@ const Estoque = () => {
                         </svg>
                         <div>
                             <h3>Próximos do Vencimento</h3>
-                            <h2>{filteredAndSortedMedicines.filter(m => m.status === 'Vencem em breve').length}</h2>
+                            {/* Uso do componente Counter */}
+                            <Counter end={itemsVencemEmBreve} duration={500} />
                             <p>Vencimento em até 30 dias</p>
                         </div>
                     </div>
@@ -182,7 +217,8 @@ const Estoque = () => {
                         </svg>
                         <div>
                             <h3>Estoque Crítico</h3>
-                            <h2>{filteredAndSortedMedicines.filter(m => m.status === 'Estoque baixo').length}</h2>
+                            {/* Uso do componente Counter */}
+                            <Counter end={itemsEstoqueBaixo} duration={500} />
                             <p>Abaixo do mínimo</p>
                         </div>
                     </div>
@@ -193,7 +229,8 @@ const Estoque = () => {
                         </svg>
                         <div>
                             <h3>Valor Total</h3>
-                            <h2>R$ 45.8K</h2>
+                            {/* Uso do componente Counter */}
+                            <h2><Counter end={totalValue} duration={500} /></h2>
                             <p>Em estoque</p>
                         </div>
                     </div>

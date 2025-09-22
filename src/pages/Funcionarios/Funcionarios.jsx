@@ -1,8 +1,36 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import './Funcionarios.css';
 import SideBar from '../SideBar/SideBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faUserCheck, faFingerprint, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+
+// Componente Counter
+const Counter = ({ end, duration = 2000 }) => {
+  const [value, setValue] = useState(0);
+  const animationFrameId = useRef(null);
+
+  useEffect(() => {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      setValue(Math.floor(progress * end));
+      if (progress < 1) {
+        animationFrameId.current = requestAnimationFrame(step);
+      }
+    };
+    
+    animationFrameId.current = requestAnimationFrame(step);
+
+    return () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    };
+  }, [end, duration]);
+
+  return <h2>{value.toLocaleString()}</h2>;
+};
 
 const Funcionarios = () => {
   const allEmployees = [
@@ -49,6 +77,11 @@ const Funcionarios = () => {
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
+  const totalEmployees = allEmployees.length;
+  const activeEmployees = allEmployees.filter(emp => emp.status === 'Ativo').length;
+  const configuredBiometry = allEmployees.filter(emp => emp.biometry === 'Configurado').length;
+  const newEmployeesThisMonth = 2; // Valor fixo para o exemplo
 
   return (
     <div className="dashboard-container">
@@ -97,28 +130,28 @@ const Funcionarios = () => {
             <div className="kpi-content">
               <FontAwesomeIcon icon={faUsers} />
               <h3>Total de Funcionários</h3>
-              <h2>{allEmployees.length}</h2>
+              <Counter end={totalEmployees} duration={500} />
             </div>
           </div>
           <div className="kpi-card">
             <div className="kpi-content">
               <FontAwesomeIcon icon={faUserCheck} />
               <h3>Funcionários Ativos</h3>
-              <h2>{allEmployees.filter(emp => emp.status === 'Ativo').length}</h2>
+              <Counter end={activeEmployees} duration={500} />
             </div>
           </div>
           <div className="kpi-card">
             <div className="kpi-content">
-               <FontAwesomeIcon icon={faFingerprint} />
+              <FontAwesomeIcon icon={faFingerprint} />
               <h3>Com Biometria</h3>
-              <h2>{allEmployees.filter(emp => emp.biometry === 'Configurado').length}</h2>
+              <Counter end={configuredBiometry} duration={500} />
             </div>
           </div>
           <div className="kpi-card">
             <div className="kpi-content">
               <FontAwesomeIcon icon={faUserPlus} />
               <h3>Novos este mês</h3>
-              <h2>2</h2>
+              <Counter end={newEmployeesThisMonth} duration={500} />
             </div>
           </div>
         </section>

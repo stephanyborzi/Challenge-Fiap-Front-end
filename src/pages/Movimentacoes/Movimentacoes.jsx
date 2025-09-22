@@ -1,44 +1,67 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import SideBar from '../SideBar/SideBar';
 import './Movimentacoes.css';
 
+const today = '22/09/2025';
+
+// Move static data outside the component to prevent re-creation on every re-render
+const initialMovements = [
+    // Today's Entradas (25 of them)
+    ...Array.from({ length: 25 }, (_, i) => ({
+        id: i + 1,
+        date: today,
+        time: `09:${(i + 1).toString().padStart(2, '0')}`,
+        type: 'Entrada',
+        product: `Produto Entrada ${i + 1}`,
+        quantity: 50 + i,
+        user: `User Entrada ${i + 1}`,
+        value: `R$ ${(100 + i * 5).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        status: 'Confirmado',
+    })),
+    // Today's Saídas (15 of them)
+    ...Array.from({ length: 15 }, (_, i) => ({
+        id: 25 + i + 1,
+        date: today,
+        time: `10:${(i + 1).toString().padStart(2, '0')}`,
+        type: 'Saída',
+        product: `Produto Saída ${i + 1}`,
+        quantity: 20 + i,
+        user: `User Saída ${i + 1}`,
+        value: `R$ ${(50 + i * 2).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        status: 'Confirmado',
+    })),
+    // Transferências (10 of them)
+    ...Array.from({ length: 10 }, (_, i) => ({
+        id: 40 + i + 1,
+        date: '21/09/2025',
+        time: `14:${(i + 1).toString().padStart(2, '0')}`,
+        type: 'Transferência',
+        product: `Produto Transferência ${i + 1}`,
+        quantity: 10 + i,
+        user: `User Transferência ${i + 1}`,
+        value: `R$ ${(30 + i * 3).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        status: 'Confirmado',
+    })),
+    // Additional data for variety
+    { id: 51, date: '15/01/2025', time: '09:30', type: 'Entrada', product: 'Paracetamol 500mg', quantity: 100, user: 'João Silva', value: 'R$ 250,00', status: 'Confirmado' },
+    { id: 52, date: '15/01/2025', time: '08:15', type: 'Saída', product: 'Ibuprofeno 400mg', quantity: 50, user: 'Maria Santos', value: 'R$ 180,00', status: 'Pendente' },
+    { id: 53, date: '14/01/2025', time: '16:45', type: 'Transferência', product: 'Dipirona 500mg', quantity: 25, user: 'Carlos Lima', value: 'R$ 75,00', status: 'Confirmado' },
+    { id: 54, date: '14/01/2025', time: '10:00', type: 'Entrada', product: 'Omeprazol 20mg', quantity: 200, user: 'Ana Paula', value: 'R$ 400,00', status: 'Confirmado' },
+    { id: 55, date: '13/01/2025', time: '14:20', type: 'Saída', product: 'Amoxicilina 500mg', quantity: 75, user: 'Pedro Costa', value: 'R$ 250,00', status: 'Confirmado' },
+];
+
 const Movimentacoes = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(5); 
-
-    // Estados para os filtros
+    const [itemsPerPage] = useState(5);
     const [searchTerm, setSearchTerm] = useState('');
     const [movementType, setMovementType] = useState('');
-    const [filterDate, setFilterDate] = useState(''); 
+    const [filterDate, setFilterDate] = useState('');
+    const [movements] = useState(initialMovements);
 
-    // Estado que armazena a lista de movimentações
-    const [movements, setMovements] = useState([
-        { id: 1, date: '15/01/2025', time: '09:30', type: 'Entrada', product: 'Paracetamol 500mg', quantity: 100, user: 'João Silva', value: 'R$ 250,00', status: 'Confirmado' },
-        { id: 2, date: '15/01/2025', time: '08:15', type: 'Saída', product: 'Ibuprofeno 400mg', quantity: 50, user: 'Maria Santos', value: 'R$ 180,00', status: 'Pendente' },
-        { id: 3, date: '14/01/2025', time: '16:45', type: 'Transferência', product: 'Dipirona 500mg', quantity: 25, user: 'Carlos Lima', value: 'R$ 75,00', status: 'Confirmado' },
-        { id: 4, date: '14/01/2025', time: '10:00', type: 'Entrada', product: 'Omeprazol 20mg', quantity: 200, user: 'Ana Paula', value: 'R$ 400,00', status: 'Confirmado' },
-        { id: 5, date: '13/01/2025', time: '14:20', type: 'Saída', product: 'Amoxicilina 500mg', quantity: 75, user: 'Pedro Costa', value: 'R$ 250,00', status: 'Confirmado' },
-        { id: 6, date: '13/01/2025', time: '11:55', type: 'Entrada', product: 'Aspirina 100mg', quantity: 300, user: 'Fernanda Lima', value: 'R$ 120,00', status: 'Confirmado' },
-        { id: 7, date: '12/01/2025', time: '17:00', type: 'Transferência', product: 'Soro Fisiológico', quantity: 150, user: 'Ricardo Almeida', value: 'R$ 90,00', status: 'Pendente' },
-        { id: 8, date: '11/01/2025', time: '09:00', type: 'Saída', product: 'Loratadina 10mg', quantity: 40, user: 'Mariana Santos', value: 'R$ 60,00', status: 'Confirmado' },
-        { id: 9, date: '11/01/2025', time: '10:15', type: 'Entrada', product: 'Novalgina 1g', quantity: 120, user: 'João Silva', value: 'R$ 300,00', status: 'Confirmado' },
-        { id: 10, date: '10/01/2025', time: '14:30', type: 'Saída', product: 'Buscopan', quantity: 30, user: 'Carla Dias', value: 'R$ 90,00', status: 'Pendente' },
-        { id: 11, date: '09/01/2025', time: '16:00', type: 'Entrada', product: 'Paracetamol 500mg', quantity: 50, user: 'João Silva', value: 'R$ 125,00', status: 'Confirmado' },
-        { id: 12, date: '08/01/2025', time: '12:00', type: 'Transferência', product: 'Ibuprofeno 400mg', quantity: 20, user: 'Carlos Lima', value: 'R$ 72,00', status: 'Confirmado' },
-        { id: 13, date: '07/01/2025', time: '11:00', type: 'Entrada', product: 'Dipirona 500mg', quantity: 100, user: 'Maria Santos', value: 'R$ 300,00', status: 'Confirmado' },
-    ]);
-    
-    const handleDelete = (id) => {
-        if (window.confirm('Tem certeza que deseja excluir esta movimentação?')) {
-            const updatedMovements = movements.filter(mov => mov.id !== id);
-            setMovements(updatedMovements);
-            setCurrentPage(1); 
-        }
-    };
-
-    const handleEdit = (id) => {
-        alert(`Você clicou em editar a movimentação com ID: ${id}`);
-    };
+    const [animatedEntradas, setAnimatedEntradas] = useState(0);
+    const [animatedSaidas, setAnimatedSaidas] = useState(0);
+    const [animatedTransferencias, setAnimatedTransferencias] = useState(0);
+    const [animatedValorTotal, setAnimatedValorTotal] = useState(0);
 
     const formatDate = (dateString) => {
         if (!dateString) return '';
@@ -46,65 +69,110 @@ const Movimentacoes = () => {
         return `${day}/${month}/${year}`;
     };
 
+    const animateCounter = (setter, targetValue, duration = 1000) => {
+        let start = 0;
+        const increment = targetValue / (duration / 10);
+        const timer = setInterval(() => {
+            start += increment;
+            if (start >= targetValue) {
+                setter(targetValue);
+                clearInterval(timer);
+            } else {
+                setter(Math.ceil(start));
+            }
+        }, 10);
+    };
+
+    const animateValueCounter = (setter, targetValue, duration = 1000) => {
+        let start = 0;
+        const increment = targetValue / (duration / 10);
+        const timer = setInterval(() => {
+            start += increment;
+            if (start >= targetValue) {
+                setter(targetValue);
+                clearInterval(timer);
+            } else {
+                setter(start);
+            }
+        }, 10);
+    };
+
+    useEffect(() => {
+        const today = new Date().toLocaleDateString('pt-BR');
+
+        const totalEntradas = movements.filter(mov => mov.type === 'Entrada' && mov.date === today).length;
+        const totalSaidas = movements.filter(mov => mov.type === 'Saída' && mov.date === today).length;
+        const totalTransferencias = movements.filter(mov => mov.type === 'Transferência').length;
+        const totalValor = movements.reduce((sum, mov) => {
+            const value = parseFloat(mov.value.replace('R$', '').replace(',', '.'));
+            return sum + (isNaN(value) ? 0 : value);
+        }, 0);
+
+        animateCounter(setAnimatedEntradas, totalEntradas);
+        animateCounter(setAnimatedSaidas, totalSaidas);
+        animateCounter(setAnimatedTransferencias, totalTransferencias);
+        animateValueCounter(setAnimatedValorTotal, totalValor);
+    }, [movements]);
+
+    const handleExport = () => {
+        const table = document.querySelector('table');
+        if (!table) {
+            console.error('Table element not found.');
+            return;
+        }
+
+        const rows = table.querySelectorAll('tr');
+        const csv = Array.from(rows).map(row => {
+            const cells = Array.from(row.querySelectorAll('td, th'));
+            return cells.map(cell => `"${cell.innerText.replace(/"/g, '""')}"`).join(',');
+        }).join('\n');
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', 'movimentacoes.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const filteredMovements = useMemo(() => {
         return movements.filter(mov => {
-            const matchesSearch = searchTerm.trim() === '' || 
+            const matchesSearch = searchTerm.trim() === '' ||
                 mov.product.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 mov.user.toLowerCase().includes(searchTerm.toLowerCase());
+
             const matchesType = movementType === '' || mov.type === movementType;
-            const matchesDate = filterDate === '' || mov.date === filterDate;
+
+            const formattedFilterDate = filterDate ? formatDate(filterDate.split('/').reverse().join('-')) : '';
+            const matchesDate = formattedFilterDate === '' || mov.date === formattedFilterDate;
+
             return matchesSearch && matchesType && matchesDate;
         });
-    }, [movements, searchTerm, movementType, filterDate]); 
+    }, [movements, searchTerm, movementType, filterDate]);
 
     const lastItemIndex = currentPage * itemsPerPage;
     const firstItemIndex = lastItemIndex - itemsPerPage;
     const currentItems = filteredMovements.slice(firstItemIndex, lastItemIndex);
     const totalPages = Math.ceil(filteredMovements.length / itemsPerPage);
 
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
-    const nextPage = () => setCurrentPage(prevPage => prevPage < totalPages ? prevPage + 1 : prevPage);
-    const prevPage = () => setCurrentPage(prevPage => prevPage > 1 ? prevPage - 1 : prevPage);
+    const pageNumbers = useMemo(() => {
+        const numbers = [];
+        for (let i = 1; i <= totalPages; i++) {
+            numbers.push(i);
+        }
+        return numbers;
+    }, [totalPages]);
 
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-    }
-    
     const handleClearDate = () => {
         setFilterDate('');
         setCurrentPage(1);
     };
 
-    const handleExport = () => {
-        const table = document.querySelector('table');
-        const filename = 'movimentacoes';
-
-        if (!table) {
-            console.error('Table element not found.');
-            return;
-        }
-
-        let csv = [];
-        const rows = table.querySelectorAll('tr');
-
-        for (const row of rows) {
-            const rowData = Array.from(row.querySelectorAll('td, th'))
-                                 .map(cell => `"${cell.innerText.replace(/"/g, '""')}"`)
-                                 .join(',');
-            csv.push(rowData);
-        }
-
-        const csvString = csv.join('\n');
-        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.setAttribute('download', `${filename}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const nextPage = () => setCurrentPage(prevPage => prevPage < totalPages ? prevPage + 1 : prevPage);
+    const prevPage = () => setCurrentPage(prevPage => prevPage > 1 ? prevPage - 1 : prevPage);
 
     return (
         <div className="dashboard-container">
@@ -146,12 +214,12 @@ const Movimentacoes = () => {
                             </select>
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <input 
-                                    type="date" 
-                                    value={filterDate ? formatDate(filterDate).split('/').reverse().join('-') : ''}
+                                <input
+                                    type="date"
+                                    value={filterDate.split('/').reverse().join('-')}
                                     onChange={e => {
                                         setFilterDate(formatDate(e.target.value));
-                                        setCurrentPage(1); 
+                                        setCurrentPage(1);
                                     }}
                                 />
                                 {filterDate && (
@@ -184,7 +252,7 @@ const Movimentacoes = () => {
                         </div>
                         <div>
                             <h3>Entradas Hoje</h3>
-                            <h2>24</h2>
+                            <h2>{animatedEntradas}</h2>
                         </div>
                     </div>
                     <div className="kpi-movimentacao-card">
@@ -196,7 +264,7 @@ const Movimentacoes = () => {
                         </div>
                         <div>
                             <h3>Saídas Hoje</h3>
-                            <h2>18</h2>
+                            <h2>{animatedSaidas}</h2>
                         </div>
                     </div>
                     <div className="kpi-movimentacao-card">
@@ -208,13 +276,20 @@ const Movimentacoes = () => {
                         </div>
                         <div>
                             <h3>Transferências</h3>
-                            <h2>7</h2>
+                            <h2>{animatedTransferencias}</h2>
                         </div>
                     </div>
                     <div className="kpi-movimentacao-card value-card">
                         <div>
                             <h3>Valor Total</h3>
-                            <h2>R$ 8.450</h2>
+                            <h2>
+                                {
+                                    animatedValorTotal.toLocaleString('pt-BR', {
+                                        style: 'currency',
+                                        currency: 'BRL',
+                                    })
+                                }
+                            </h2>
                         </div>
                         <div className="kpi-mov-icon value-icon">
                             <span className="currency-symbol">$</span>
@@ -236,35 +311,39 @@ const Movimentacoes = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {currentItems.map((mov) => (
-                                <tr key={mov.id}>
-                                    <td>
-                                        <div className="table-date-time">
-                                            <span>{mov.date}</span>
-                                            <span className="table-time">{mov.time}</span>
+                            {currentItems.length > 0 ? (
+                                currentItems.map((mov) => (
+                                    <tr key={mov.id}>
+                                        <td>
+                                            <div className="table-date-time">
+                                                <span>{mov.date}</span>
+                                                <span className="table-time">{mov.time}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span className={`status-tag status-${mov.type.toLowerCase()}`}>{mov.type}</span>
+                                        </td>
+                                        <td>{mov.product}</td>
+                                        <td>{mov.quantity} unidades</td>
+                                        <td>{mov.user}</td>
+                                        <td>{mov.value}</td>
+                                        <td>
+                                            <span className={`status-tag status-${mov.status.toLowerCase()}`}>{mov.status}</span>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="7">
+                                        <div className="no-results-message">
+                                            Nenhuma movimentação encontrada.
                                         </div>
                                     </td>
-                                    <td>
-                                        <span className={`status-tag status-${mov.type.toLowerCase()}`}>{mov.type}</span>
-                                    </td>
-                                    <td>{mov.product}</td>
-                                    <td>{mov.quantity} unidades</td>
-                                    <td>{mov.user}</td>
-                                    <td>{mov.value}</td>
-                                    <td>
-                                        <span className={`status-tag status-${mov.status.toLowerCase()}`}>{mov.status}</span>
-                                    </td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </table>
-                    
-                    {currentItems.length === 0 && (
-                        <div className="no-results-message">
-                            Nenhuma movimentação encontrada.
-                        </div>
-                    )}
-                    
+
                     <div className="pagination">
                         <span>Mostrando {firstItemIndex + 1} a {Math.min(lastItemIndex, filteredMovements.length)} de {filteredMovements.length} resultados</span>
                         <div className="pagination-controls">
