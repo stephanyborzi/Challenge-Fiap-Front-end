@@ -58,7 +58,7 @@ const SideBar = () => {
         <div className="user-profile">
           <User size={40} />
           <div className="user-info">
-            <span>João Silva</span>
+            <span>Maria Silva</span>
             <small>Administrador</small>
           </div>
           <Link to="/perfil" className="settings-link">

@@ -1,9 +1,12 @@
 :root {
-  --primary-color: #04043c; 
-  --secondary-color: #3498db; 
-  --background-light: #f4f7f9; 
-  --background-card: #ffffff; 
+  --primary-color: #04043c;
+  --secondary-color: #3498db;
+  --background-light: #f4f7f9;
+  --background-card: #ffffff;
+  --text-dark: #2c3e50;
+  --text-light: #ecf0f1;
   --text-muted: #7f8c8d;
+  --border-color: #e0e6ed;
 }
 
 body {
@@ -25,6 +28,7 @@ ul {
   list-style: none;
 }
 
+
 .sidebar {
   width: 250px;
   background-color: var(--primary-color);
@@ -32,13 +36,22 @@ ul {
   padding: 20px 0;
   display: flex;
   flex-direction: column;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh; 
+  overflow-y: auto; 
+  z-index: 1000; 
 }
 
 .logo-image {
-  display: block;      
+  display: block;
   width: 120px;
   height: auto;
-  margin: 0 auto 20px; 
+  margin: 0 auto 20px;
 }
 
 .sidebar .logo {
@@ -46,7 +59,7 @@ ul {
   font-weight: bold;
   padding: 10px 20px;
   margin-left: 20px;
-  color:var(--background-card);
+  color: var(--background-card);
 }
 
 .sidebar .nav-menu {
@@ -65,7 +78,7 @@ ul {
 .sidebar .nav-menu li.active a {
   background-color: rgba(255, 255, 255, 0.1);
   border-left: 4px solid var(--secondary-color);
-  padding-left: 21px; 
+  padding-left: 21px;
 }
 
 .sidebar .nav-menu svg {
@@ -73,12 +86,14 @@ ul {
   width: 18px;
   height: 18px;
 }
+
 .sidebar .user-profile {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto; 
 }
 
 .sidebar .user-profile img {
@@ -103,4 +118,11 @@ ul {
 .sidebar .user-profile small {
   color: var(--text-muted);
   font-size: 12px;
+}
+
+.dashboard-container {
+  height: 100vh;
+  margin-left: 150px;
+  display: center;
+  padding-left: 10px;
 }

@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import './Dashboard.css'; 
+import './Dashboard.css';
 import SideBar from '../SideBar/SideBar';
-import { LayoutDashboard, Boxes, Users, ScanFace, RefreshCw, BarChart2, Package, AlertTriangle, UserCheck, Activity, User, Settings } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Package, AlertTriangle, UserCheck, Activity } from "lucide-react";
 
 const Counter = ({ end, duration = 2000 }) => {
   const [value, setValue] = useState(0);
 
   useEffect(() => {
     let startTimestamp = null;
-
     const step = (timestamp) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / duration, 1);
       setValue(Math.floor(progress * end));
-
       if (progress < 1) {
         requestAnimationFrame(step);
       }
     };
-
     requestAnimationFrame(step);
   }, [end, duration]);
 
@@ -27,7 +23,7 @@ const Counter = ({ end, duration = 2000 }) => {
 };
 
 const Dashboard = () => {
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1); 
   const [searchTerm, setSearchTerm] = useState("");
   const productsPerPage = 5;
 
@@ -39,6 +35,8 @@ const Dashboard = () => {
     { name: "Losartana 50mg", code: "MED005", category: "Anti-hipertensivos", stock: 15, minStock: 30 },
     { name: "Ibuprofeno 600mg", code: "MED006", category: "Anti-inflamatórios", stock: 45, minStock: 25 },
     { name: "Metformina 850mg", code: "MED007", category: "Diabetes", stock: 60, minStock: 40 },
+    { name: "Sertralina 50mg", code: "MED008", category: "Antidepressivos", stock: 10, minStock: 20 },
+    { name: "Atenolol 25mg", code: "MED009", category: "Cardiovascular", stock: 50, minStock: 50 },
   ];
 
   const filteredProducts = products.filter((product) =>
@@ -48,14 +46,19 @@ const Dashboard = () => {
   );
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-  const currentProducts = filteredProducts.slice(
-    currentPage * productsPerPage,
-    currentPage * productsPerPage + productsPerPage
-  );
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+
+  const paginate = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    setCurrentPage(0); 
+    setCurrentPage(1); 
   };
 
   return (
@@ -70,7 +73,7 @@ const Dashboard = () => {
               type="text"
               placeholder="Buscar..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)} 
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
             <button type="submit">Search</button>
           </form>
@@ -84,7 +87,6 @@ const Dashboard = () => {
               <p>+12% este mês</p>
             </div>
           </div>
-
           <div className="kpi-card attention">
             <AlertTriangle size={28} />
             <div>
@@ -93,7 +95,6 @@ const Dashboard = () => {
               <p>Requer atenção</p>
             </div>
           </div>
-
           <div className="kpi-card">
             <UserCheck size={28} />
             <div>
@@ -102,7 +103,6 @@ const Dashboard = () => {
               <p>+3 novos</p>
             </div>
           </div>
-
           <div className="kpi-card">
             <Activity size={28} />
             <div>
@@ -117,7 +117,7 @@ const Dashboard = () => {
           <h2>Produtos com Estoque Baixo</h2>
           <table>
             <thead>
-              <tr>
+              <tr className='table-header'>
                 <th>PRODUTO</th>
                 <th>CÓDIGO</th>
                 <th>CATEGORIA</th>
@@ -141,17 +141,39 @@ const Dashboard = () => {
               ))}
             </tbody>
           </table>
-          <div className="pagination">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                className={i === currentPage ? "active" : ""}
-                onClick={() => setCurrentPage(i)}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
+          
+          {totalPages > 0 && (
+            <div className="pagination">
+              <span className="pagination-info">
+                Mostrando {indexOfFirstProduct + 1} a {Math.min(indexOfLastProduct, filteredProducts.length)} de {filteredProducts.length} produtos
+              </span>
+              <div className="pagination-buttons">
+                <button
+                  className="pagination-btn"
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  &lt;
+                </button>
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <button
+                    key={index + 1}
+                    className={`pagination-btn ${currentPage === index + 1 ? 'active' : ''}`}
+                    onClick={() => paginate(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+                <button
+                  className="pagination-btn"
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={currentPage === totalPages}a
+                >
+                  &gt;
+                </button>
+              </div>
+            </div>
+          )}
         </section>
       </main>
     </div>

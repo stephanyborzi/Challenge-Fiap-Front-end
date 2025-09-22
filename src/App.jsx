@@ -9,8 +9,7 @@ import Funcionarios from "./pages/Funcionarios/Funcionarios.jsx";
 import ReconhecimentoFacial from "./pages/ReconhecimentoFacial/ReconhecimentoFacial.jsx";
 import Movimentacoes from "./pages/Movimentacoes/Movimentacoes.jsx";
 import Relatorios from "./pages/Relatorios/Relatorios.jsx";
-
-
+import Perfil from "./pages/Perfil/Perfil.jsx";
 
 const App = () => {
   return (
@@ -25,6 +24,7 @@ const App = () => {
         <Route path="/reconhecimentofacial" element={<ReconhecimentoFacial/>} />
         <Route path="/movimentacoes" element={<Movimentacoes/>} />
         <Route path="/relatorios" element={<Relatorios/>} />
+        <Route path="/perfil" element={<Perfil/>} />
       </Routes>
     </Router>
   );
