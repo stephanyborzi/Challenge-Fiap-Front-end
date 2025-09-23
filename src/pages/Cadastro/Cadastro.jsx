@@ -142,7 +142,7 @@ const Cadastro = () => {
           className="logo"
         />
         <h1>Criar Conta</h1>
-        <h3>Cadastre-se no StockManager</h3>
+        <h3>Cadastre-se no ControlSystem</h3>
 
         <div className="input-field-group">
           <div className="input-field">

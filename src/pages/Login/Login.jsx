@@ -139,7 +139,7 @@ const Login = () => {
           className="logo"
         />
         <h1>Bem-Vindo de Volta</h1>
-        <h3>Faça login no StockManager</h3>
+        <h3>Faça login no ControlSystem</h3>
 
         <div className="input-field">
           <input 

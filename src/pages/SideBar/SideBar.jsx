@@ -18,7 +18,7 @@ const SideBar = () => {
     <div className="dashboard-container">
       <aside className="sidebar">
         <img src={logo} alt="Logo" className="logo-image" />
-        <div className="logo">StockManager</div>
+        <div className="logo">ControlSystem</div>
 
         <nav className="nav-menu">
           <ul>

@@ -62,7 +62,7 @@ const Home = () => {
           <img src={logo} alt="Logo" className="logo-image" />
           <div className="header-info">
             <div className="header-title">
-              <h1>DASA StockManager</h1>
+              <h1>DASA ControlSystem</h1>
               <p>Sistema Inteligente de Gestão</p>
             </div>
           </div>
