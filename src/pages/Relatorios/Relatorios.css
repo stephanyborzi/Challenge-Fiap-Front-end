@@ -51,10 +51,10 @@ body {
 }
 
 .main-title {
-  font-size: 2.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
   margin: 0 0 0.5rem;
-  color: var(--primary-color);
+  color: var(--text-color-primary);
 }
 
 .relatorios-header p {

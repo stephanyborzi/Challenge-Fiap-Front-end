@@ -111,6 +111,33 @@ body {
     animation: none;
 }
 
+/* Estilização para os campos de dados do funcionário */
+.employee-info-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.employee-info-form input {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    color: var(--text-dark);
+    background-color: var(--background-light);
+    transition: all 0.3s ease;
+}
+
+.employee-info-form input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.employee-info-form input::placeholder {
+    color: var(--text-muted);
+}
+
 @keyframes pulse {
     0% { transform: scale(1); opacity: 1; }
     50% { transform: scale(1.05); opacity: 0.8; }

@@ -1,7 +1,12 @@
-import { FaUser, FaLock, FaSmile, FaCamera } from "react-icons/fa";
+import { FaUser, FaLock, FaSmile, FaCamera, FaSpinner, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { useState, useRef, useEffect } from "react";
 import "./Cadastro.css";
-import { useState } from "react";
-import CadastroService from "./CadastroService";
+const CadastroService = {
+  cadastro: async (data) => {
+    console.log("Simulating registration with data:", data);
+    return { code: 201, message: "Cadastro realizado com sucesso!" };
+  }
+};
 
 const Cadastro = () => {
   const [nome, setNome] = useState("");
@@ -9,28 +14,105 @@ const Cadastro = () => {
   const [email, setEmail] = useState("");
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
-  const [cargo, setCargo] = useState(""); 
-  const [aceitouTermos, setAceitouTermos] = useState(false); 
+  const [cargo, setCargo] = useState("");
+  const [aceitouTermos, setAceitouTermos] = useState(false);
 
-  async function cadastro(data) {
-    try {
-      const response = await CadastroService.cadastro(data);
-      if (response.code === 201) {
-        console.log("Cadastro successful:", response);
-        return true;
+  const [facialStatus, setFacialStatus] = useState('idle'); 
+  const videoRef = useRef(null);
+  const [cameraReady, setCameraReady] = useState(false);
+  const [facialData, setFacialData] = useState(null);
+
+  useEffect(() => {
+    const startCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play();
+          setCameraReady(true);
+        }
+      } catch (err) {
+        console.error("Erro ao acessar a câmera: ", err);
+        setFacialStatus('camera-error');
+        setCameraReady(false);
       }
-    } catch (error) {
-      alert("Erro ao cadastrar");
-      console.error("Cadastro failed");
-      return false;
+    };
+
+    startCamera();
+
+    return () => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+
+  // Função para capturar a foto e simular o processamento
+  const handleFacialCapture = () => {
+    if (!cameraReady || facialStatus === 'capturing' || facialStatus === 'processing') return;
+
+    setFacialStatus('capturing');
+    console.log("Iniciando captura facial...");
+
+    // Simula a captura
+    setTimeout(() => {
+      setFacialStatus('processing');
+      console.log("Captura bem-sucedida. Processando reconhecimento...");
+
+      setTimeout(() => {
+        const canvas = document.createElement('canvas');
+        canvas.width = videoRef.current.videoWidth;
+        canvas.height = videoRef.current.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+
+        const imageData = canvas.toDataURL('image/jpeg');
+        setFacialData(imageData);
+
+        setFacialStatus('success');
+        console.log("Reconhecimento facial bem-sucedido!");
+      }, 2000); 
+    }, 1000); 
+  };
+
+  const getButtonContent = () => {
+    switch (facialStatus) {
+      case 'capturing':
+        return <><FaSpinner className="icon spin" /> Capturando...</>;
+      case 'processing':
+        return <><FaSpinner className="icon spin" /> Analisando Rosto...</>;
+      case 'success':
+        return <><FaCheckCircle className="icon" /> Foto Capturada!</>;
+      case 'camera-error':
+        return <><FaTimesCircle className="icon" /> Erro na Câmera</>;
+      default:
+        return <><FaCamera className="icon" /> Capturar Foto do Rosto</>;
     }
+  };
+
+  const getButtonClass = () => {
+    if (facialStatus === 'success') return 'capture-button success';
+    if (facialStatus === 'camera-error') return 'capture-button failure';
+    return 'capture-button';
+  };
+
+  // O cadastro agora sempre retorna sucesso, como solicitado
+  async function cadastro(data) {
+    await CadastroService.cadastro(data);
+    console.log("Cadastro successful:", data);
+    return true;
   }
 
   async function handleCadastro (event) {
-    if (nome ==="" || sobrenome ==="" || email ==="" || usuario ==="" || senha ==="" || cargo ==="") {
-      alert("Por favor, preencha todos os campos obrigatórios.");
+    if (nome === "" || sobrenome === "" || email === "" || usuario === "" || senha === "" || cargo === "") {
+      // Use a custom modal instead of alert()
+      console.log("Por favor, preencha todos os campos obrigatórios.");
     } else if (!aceitouTermos) {
-      alert("Você deve aceitar os termos e políticas de privacidade.");
+      // Use a custom modal instead of alert()
+      console.log("Você deve aceitar os termos e políticas de privacidade.");
+    } else if (facialStatus !== 'success') {
+      // Use a custom modal instead of alert()
+      console.log("Você deve capturar a foto do rosto para o cadastro.");
     } else {
       const data = {
         nome,
@@ -38,20 +120,22 @@ const Cadastro = () => {
         email,
         usuario,
         senha,
-        cargo
-      }
-      const result = cadastro(data);
+        cargo,
+        facialData
+      };
+      // A função 'cadastro' agora sempre retorna 'true'
+      const result = await cadastro(data);
       if (result) {
-        window.location.href = "/login";
-        alert("Cadastro realizado com sucesso! Por favor, faça o login.");
+        window.location.href = "/";
+        // Use a custom modal instead of alert()
+        console.log("Cadastro realizado com sucesso! Por favor, faça o login.");
       }
     }
-    return;
   };
 
   return (
     <div className="container">
-      <form onSubmit={handleCadastro} className="login-form">
+      <form onSubmit={(e) => { e.preventDefault(); handleCadastro(); }} className="login-form">
         <img
           src="src\images\dasa_logo.png"
           alt="Logo"
@@ -97,15 +181,27 @@ const Cadastro = () => {
         </div>
 
         <div className="facial-recognition-container">
-          <div className="header">
-            <h2>Configurar Reconhecimento Facial</h2>
-            <span className="optional">Obrigatório</span>
-          </div>
           <p>Configure o reconhecimento facial para login rápido e seguro.</p>
-          <button type="button" className="capture-button">
-            <FaCamera />
-            Capturar Foto do Rosto
+          <button
+            type="button"
+            className={getButtonClass()}
+            onClick={handleFacialCapture}
+            disabled={!cameraReady || facialStatus === 'capturing' || facialStatus === 'processing'}
+          >
+            {getButtonContent()}
           </button>
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className={`face-circle ${facialStatus === 'processing' ? 'scanning-effect' : ''}`}
+          ></video>
+          {facialStatus === 'success' && (
+            <div className="facial-success-message">
+              <FaCheckCircle className="success-icon" />
+            </div>
+          )}
         </div>
 
         <div className="recall-forget">
@@ -119,7 +215,7 @@ const Cadastro = () => {
       </nav>
         <div className="register">
           <span>Já tem uma conta?</span>
-          <a href="/login">Entrar</a>
+          <a href="/">Entrar</a>
         </div>
       </form>
     </div>

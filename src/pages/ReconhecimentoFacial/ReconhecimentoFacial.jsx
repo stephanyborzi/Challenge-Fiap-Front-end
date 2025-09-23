@@ -8,16 +8,12 @@ const ReconhecimentoFacial = () => {
     const [infoMessage, setInfoMessage] = useState('Mantenha-se imóvel por 3 segundos para captura');
     const [lastResult, setLastResult] = useState(null);
     const [cameraReady, setCameraReady] = useState(false);
+    
+    // Estados para os dados do novo funcionário
+    const [employeeName, setEmployeeName] = useState('');
+    const [employeeId, setEmployeeId] = useState('');
 
     const videoRef = useRef(null);
-
-    const uncadastredEmployees = [
-        'Alice Souza',
-        'Bruno Costa',
-        'Carla Dias',
-        'Eduardo Mendes',
-        'Fernanda Santos'
-    ];
 
     useEffect(() => {
         const startCamera = async () => {
@@ -48,11 +44,17 @@ const ReconhecimentoFacial = () => {
     }, []);
 
     const handleStartCapture = () => {
+        // Valida se os campos foram preenchidos
+        if (!employeeName.trim() || !employeeId.trim()) {
+            alert('Por favor, preencha o nome e o ID do funcionário.');
+            return;
+        }
+
         if (status === 'capturing' || status === 'processing' || !cameraReady) return;
 
         setStatus('capturing');
         setStatusMessage('Capturando...');
-        setInfoMessage('Não se mova. A captura está em andamento.');
+        setInfoMessage(`Capturando o rosto de ${employeeName}. Não se mova.`);
         setLastResult(null);
 
         setTimeout(() => {
@@ -61,16 +63,16 @@ const ReconhecimentoFacial = () => {
             setInfoMessage('Analisando as características faciais...');
 
             setTimeout(() => {
-                const isSuccess = true; 
+                const isSuccess = true; // Simulação de sucesso no cadastro
                 if (isSuccess) {
                     setStatus('success');
-                    setStatusMessage('Reconhecimento Concluído!');
-                    setInfoMessage('Acesso concedido. Bem-vindo(a)!');
+                    setStatusMessage(`Seja bem-vindo(a), ${employeeName}!`);
+                    setInfoMessage('Reconhecimento facial cadastrado com sucesso.');
                     setLastResult('success');
                 } else {
                     setStatus('failure');
-                    setStatusMessage('Falha no Reconhecimento');
-                    setInfoMessage('Não foi possível identificar o rosto. Tente novamente.');
+                    setStatusMessage('Falha no Cadastro');
+                    setInfoMessage('Não foi possível capturar o rosto. Tente novamente.');
                     setLastResult('failure');
                 }
             }, 2000);
@@ -82,6 +84,8 @@ const ReconhecimentoFacial = () => {
         setStatusMessage('Posicione seu rosto no círculo');
         setInfoMessage('Mantenha-se imóvel por 3 segundos para captura');
         setLastResult(null);
+        setEmployeeName('');
+        setEmployeeId('');
     };
 
     const getStatusDotClass = () => {
@@ -92,16 +96,20 @@ const ReconhecimentoFacial = () => {
     };
 
     const instructionItems = [
+        { text: 'Preencha os dados do funcionário', icon: 'fas fa-id-card' },
         { text: 'Posicione seu rosto no centro do círculo', icon: 'fas fa-crosshairs' },
         { text: 'Mantenha-se imóvel durante a captura', icon: 'fas fa-pause-circle' },
         { text: 'Remova óculos escuros ou máscaras', icon: 'fas fa-mask' },
-        { text: 'Certifique-se de boa iluminação', icon: 'fas fa-lightbulb' },
     ];
 
     return (
         <div className="reconhecimentofacial-container">
             <SideBar />
             <main className="reconhecimento-main-content">
+                <div className="reconhecimento-header">
+                    <h1>Cadastro de Reconhecimento Facial</h1>
+                    <p>Preencha os dados abaixo e siga as instruções para cadastrar o reconhecimento facial de um novo funcionário.</p>
+                </div>
                 <div className="reconhecimento-content">
                     <div className="recognition-area">
                         <div className={`camera-view ${status}`}>
@@ -115,11 +123,11 @@ const ReconhecimentoFacial = () => {
                                     onClick={handleStartCapture}
                                     disabled={status === 'capturing' || status === 'processing' || !cameraReady}
                                 >
-                                    <i className="fas fa-camera"></i> {status === 'capturing' ? 'Capturando...' : status === 'processing' ? 'Processando...' : 'Iniciar Captura'}
+                                    <i className="fas fa-camera"></i> {status === 'capturing' ? 'Capturando...' : status === 'processing' ? 'Processando...' : 'Iniciar Cadastro'}
                                 </button>
                             ) : (
                                 <button className="retry-button" onClick={handleRetry}>
-                                    <i className="fas fa-sync-alt"></i> Tentar Novamente
+                                    <i className="fas fa-sync-alt"></i> Cadastrar Outro
                                 </button>
                             )}
                         </div>
@@ -127,7 +135,28 @@ const ReconhecimentoFacial = () => {
                     <div className="info-area">
                         <div className="info-card">
                             <h3 className="card-title">
-                                <i className="fas fa-info-circle"></i> Status do Reconhecimento
+                                <i className="fas fa-user-plus"></i> Dados do Novo Funcionário
+                            </h3>
+                            <div className="employee-info-form">
+                                <input
+                                    type="text"
+                                    placeholder="Nome do Funcionário"
+                                    value={employeeName}
+                                    onChange={e => setEmployeeName(e.target.value)}
+                                    disabled={status !== 'idle' && status !== 'failure'}
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="ID do Funcionário"
+                                    value={employeeId}
+                                    onChange={e => setEmployeeId(e.target.value)}
+                                    disabled={status !== 'idle' && status !== 'failure'}
+                                />
+                            </div>
+                        </div>
+                        <div className="info-card">
+                            <h3 className="card-title">
+                                <i className="fas fa-info-circle"></i> Status do Cadastro
                             </h3>
                             <div className="status-item">
                                 <span className={getStatusDotClass()}></span>
@@ -146,25 +175,6 @@ const ReconhecimentoFacial = () => {
                                         <span>{item.text}</span>
                                     </div>
                                 ))}
-                            </div>
-                        </div>
-                        <div className="info-card">
-                            <h3 className="card-title">
-                                <i className="fas fa-users-slash"></i> Pendentes
-                            </h3>
-                            <div className="uncadastred-list">
-                                {uncadastredEmployees.length > 0 ? (
-                                    uncadastredEmployees.map((name, index) => (
-                                        <div key={index} className="uncadastred-item">
-                                            <span className="uncadastred-dot"></span>
-                                            <span>{name}</span>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="uncadastred-item no-employees">
-                                        Nenhum funcionário pendente.
-                                    </div>
-                                )}
                             </div>
                         </div>
                     </div>

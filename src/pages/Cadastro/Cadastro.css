@@ -1,14 +1,29 @@
+/* Adjusted CSS for Cadastro.css */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+:root {
+  --primary-color: #2c3e50;
+  --secondary-color: #34495e;
+  --text-color-dark: #333;
+  --text-color-medium: #666;
+  --text-color-light: #999;
+  --bg-color-light: #f0f2f5;
+  --bg-color-white: #fff;
+  --border-color: #e0e0e0;
+  --success-color: #2ecc71;
+  --failure-color: #e74c3c;
+}
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #f0f2f5;
+  background: linear-gradient(135deg, var(--bg-color-light), #e8ecf1);
   font-family: 'Roboto', sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  color: var(--text-color-dark);
 }
 
 .container {
@@ -19,149 +34,162 @@ body {
 }
 
 .login-form {
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background-color: var(--bg-color-white);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 450px;
   box-sizing: border-box;
   text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-form:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
 }
 
 .logo {
-  width: 60px;
-  height: 50px;
+  width: 70px;
+  height: auto;
   margin-bottom: 10px;
 }
 
 h1 {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  color: #333;
+  color: var(--text-color-dark);
   margin: 0 0 5px;
 }
 
 h3 {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
-  color: #666;
-  margin: 0 0 25px;
+  color: var(--text-color-medium);
+  margin: 0 0 30px;
 }
 
 .input-field-group {
   display: flex;
   gap: 15px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .input-field {
   position: relative;
   width: 100%;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .input-field label {
   display: block;
   font-size: 14px;
-  color: #555;
-  margin-bottom: 5px;
+  color: var(--text-color-medium);
+  margin-bottom: 8px;
   font-weight: 500;
-  text-align: left; 
+  text-align: left;
 }
 
 .input-field input,
 .input-field select {
   width: 100%;
-  padding: 12px 40px 12px 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  padding: 14px 45px 14px 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
   font-size: 16px;
   box-sizing: border-box;
   outline: none;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .input-field input:focus,
 .input-field select:focus {
-  border-color: #007bff;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.2);
 }
 
 .input-field .icon {
   position: absolute;
-  right: 15px;
+  right: 20px;
   top: 50%;
   transform: translateY(-50%);
-  color: #999;
+  color: var(--text-color-light);
+  pointer-events: none;
 }
 
 .input-field.select-field select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6"><path fill="%23999" d="M5 6L0 0h10z"/></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="7" viewBox="0 0 12 7"><path fill="%23666" d="M6 7L0 1h12z"/></svg>');
   background-repeat: no-repeat;
-  background-position: right 15px center;
-  padding-right: 35px;
+  background-position: right 20px center;
+  padding-right: 45px;
 }
 
 .facial-recognition-container {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border: 1px dashed var(--border-color);
+  border-radius: 12px;
   padding: 20px;
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.facial-recognition-container .header {
+  margin-bottom: 25px;
+  text-align: center;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 10px;
-}
-
-.facial-recognition-container h2 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
-}
-
-.facial-recognition-container .optional {
-  font-size: 12px;
-  color: #999;
-  background-color: #f0f0f0;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-weight: 500;
 }
 
 .facial-recognition-container p {
-  font-size: 13px;
-  color: #888;
+  font-size: 14px;
+  color: var(--text-color-medium);
   margin: 0 0 15px 0;
 }
 
-.capture-button {
+.capture-button,
+.face-login {
   width: 100%;
-  padding: 12px;
-  font-size: 15px;
+  padding: 14px;
+  font-size: 16px;
   font-weight: 500;
-  color: #007bff;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  color: var(--primary-color);
+  background-color: var(--bg-color-white);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  transition: background-color 0.3s;
+  gap: 10px;
+  transition: all 0.3s ease;
 }
 
-.capture-button:hover {
+.capture-button:hover,
+.face-login:hover:not(:disabled) {
   background-color: #f8f8f8;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
 }
+
+.capture-button:disabled,
+.face-login:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.capture-button.success,
+.face-login.success {
+  background-color: var(--success-color);
+  color: #fff;
+  border-color: var(--success-color);
+}
+
+.capture-button.failure,
+.face-login.failure {
+  background-color: var(--failure-color);
+  color: #fff;
+  border-color: var(--failure-color);
+}
+
 .recall-forget {
   display: flex;
   align-items: center;
@@ -173,50 +201,158 @@ h3 {
 .recall-forget label {
   display: flex;
   align-items: center;
-  color: #555;
+  color: var(--text-color-medium);
+  cursor: pointer;
 }
 
 .recall-forget input[type="checkbox"] {
   margin-right: 8px;
+  accent-color: var(--primary-color);
 }
 
-.login-form button[type="submit"],
-.btn-link {
+.login-form .btn-link {
   width: 100%;
-  padding: 12px;
-  background-color: #2c3e50; 
+  padding: 14px;
+  background-color: var(--primary-color);
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s;
-  
-  display: inline-block; 
+  transition: background-color 0.3s ease;
+  display: inline-block;
   text-align: center;
-  text-decoration: none; 
-  box-sizing: border-box; 
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
-.login-form button[type="submit"]:hover,
-.btn-link:hover {
-  background-color: #1a242f;
+.login-form .btn-link:hover {
+  background-color: var(--secondary-color);
+}
+
+.button-group {
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.separator {
+  position: relative;
+  text-align: center;
+  margin: 10px 0;
+  color: var(--text-color-light);
+  font-size: 14px;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background-color: var(--border-color);
+}
+
+.separator::before {
+  left: 0;
+}
+
+.separator::after {
+  right: 0;
 }
 
 .register {
-  margin-top: 20px;
+  margin-top: 25px;
   font-size: 14px;
-  color: #555;
+  color: var(--text-color-medium);
 }
 
 .register a {
-  color: #007bff;
+  color: var(--primary-color);
   text-decoration: none;
   font-weight: bold;
   margin-left: 5px;
+  transition: text-decoration 0.3s ease;
 }
 
 .register a:hover {
   text-decoration: underline;
+}
+
+/* Base style for the video circle */
+.face-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-top: 20px;
+  border: 4px solid var(--border-color);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.5s ease, transform 0.3s ease;
+}
+
+/* Keyframes for the "scanning" pulse effect */
+@keyframes pulse-border {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 150, 255, 0.4);
+    border-color: #007bff;
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(0, 150, 255, 0);
+    border-color: #66ccff;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 150, 255, 0);
+    border-color: #007bff;
+  }
+}
+
+/* Class to apply the scanning effect */
+.face-circle.scanning-effect {
+  animation: pulse-border 1.5s infinite;
+  border-color: #007bff;
+}
+
+/* Class for the success state */
+.face-circle.success-border {
+  border-color: var(--success-color);
+  animation: none; /* Stop the animation */
+  transform: scale(1.05); /* Slight enlargement on success */
+}
+
+/* Class for the failure state */
+.face-circle.failure-border {
+  border-color: var(--failure-color);
+  animation: none;
+}
+
+.facial-success-message {
+  margin-top: 20px;
+  color: var(--success-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Responsiveness */
+@media (max-width: 500px) {
+  .login-form {
+    padding: 25px;
+    margin: 20px;
+  }
+  
+  .input-field-group {
+    flex-direction: column;
+    gap: 0;
+  }
 }

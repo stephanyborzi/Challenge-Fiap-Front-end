@@ -23,7 +23,7 @@ const SideBar = () => {
         <nav className="nav-menu">
           <ul>
             <li className="active">
-              <Link to="/">
+              <Link to="/dashboard">
                 <LayoutDashboard size={18} /> Dashboard
               </Link>
             </li>
