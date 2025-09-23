@@ -359,3 +359,10 @@ a {
   color: var(--text-muted);
   border-color: var(--border-color);
 }
+
+.dashboard-container {
+  height: 100vh;
+  margin-left: 160px;
+  display: center;
+  padding-left: 10px;
+}

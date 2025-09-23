@@ -286,6 +286,13 @@ body {
   border-color: var(--border-color);
 }
 
+.dashboard-container {
+  height: 100vh;
+  margin-left: 160px;
+  display: center;
+  padding-left: 10px;
+}
+
 @media (max-width: 768px) {
   .panels-section {
     grid-template-columns: 1fr;

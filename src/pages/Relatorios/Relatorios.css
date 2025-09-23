@@ -21,7 +21,7 @@ body {
 .relatorios-page {
   display: flex;
   min-height: 100vh;
-  max-width: 1300px; /* Limita a largura máxima da página */
+  max-width: 1100px; /* Limita a largura máxima da página */
   margin: 0 auto; /* Centraliza o conteúdo na tela */
 }
 
@@ -205,7 +205,6 @@ body {
   display: block;
 }
 
-/* --- Predictions Section --- */
 .predictions-section {
   margin-bottom: 2rem;
 }
@@ -361,7 +360,7 @@ body {
   margin-top: 2rem;
 }
 
-/* --- Responsive adjustments --- */
+
 @media (max-width: 768px) {
   .relatorios-page {
     max-width: 100%;

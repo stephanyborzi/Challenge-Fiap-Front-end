@@ -15,6 +15,7 @@ const Perfil = () => {
     });
 
     const [isEditing, setIsEditing] = useState(false);
+    const [imageError, setImageError] = useState('');
     const iconColor = '#030444';
     const iconColorCheck = '#2ecc71';
 
@@ -26,8 +27,18 @@ const Perfil = () => {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            const imageUrl = URL.create.Object.URL(file);
+            if (file.size > 2 * 1024 * 1024) { 
+                setImageError('O arquivo é muito grande. Tamanho máximo é de 2MB.');
+                return;
+            }
+            if (!['image/jpeg', 'image/png'].includes(file.type)) {
+                setImageError('Formato de arquivo inválido. Use JPG ou PNG.');
+                return;
+            }
+
+            const imageUrl = URL.createObjectURL(file);
             setUserData({ ...userData, profileImage: imageUrl });
+            setImageError('');
         }
     };
 
@@ -42,6 +53,7 @@ const Perfil = () => {
 
     const handleCancelClick = () => {
         setIsEditing(false);
+        setImageError('');
     };
 
     return (
@@ -58,7 +70,7 @@ const Perfil = () => {
                     <section className="profile-info-section">
                         <div className="profile-header">
                             <div className="profile-image-container">
-                                <label htmlFor="profile-image-upload">
+                                <label htmlFor="profile-image-upload" className="editable">
                                     {userData.profileImage ? (
                                         <img 
                                             src={userData.profileImage} 
@@ -79,8 +91,9 @@ const Perfil = () => {
                                     id="profile-image-upload"
                                     style={{ display: 'none' }}
                                     onChange={handleImageChange}
-                                    accept="image/*"
+                                    accept="image/png, image/jpeg"
                                 />
+                                {imageError && <span className="image-error-message">{imageError}</span>}
                                 <div className="user-profile-details">
                                     <h2>Maria Silva</h2>
                                     <p className="user-role">{userData.cargo}</p>

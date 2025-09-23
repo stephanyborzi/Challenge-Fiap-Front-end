@@ -371,6 +371,12 @@
   cursor: pointer;
 }
 
+.dashboard-container {
+  margin-left: 160px;
+  display: center;
+  padding-left: 10px;
+}
+
 @media (max-width: 768px) {
     .profile-header {
         flex-direction: column;
