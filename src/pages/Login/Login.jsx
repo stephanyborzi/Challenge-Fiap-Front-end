@@ -13,6 +13,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [facialStatus, setFacialStatus] = useState('idle'); 
+  const videoRef = useRef(null);
   const [cameraReady, setCameraReady] = useState(false);
   const [facialData, setFacialData] = useState(null);
   
@@ -109,7 +110,6 @@ const Login = () => {
       facialData
     };
     
-    // Simula a chamada de login que sempre terá sucesso, conforme solicitado
     const result = await LoginService.login(data);
     
     if (result.code === 200) {
