@@ -4,9 +4,7 @@ import './Movimentacoes.css';
 
 const today = '22/09/2025';
 
-// Move static data outside the component to prevent re-creation on every re-render
 const initialMovements = [
-    // Today's Entradas (25 of them)
     ...Array.from({ length: 25 }, (_, i) => ({
         id: i + 1,
         date: today,
@@ -18,7 +16,6 @@ const initialMovements = [
         value: `R$ ${(100 + i * 5).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
         status: 'Confirmado',
     })),
-    // Today's Saídas (15 of them)
     ...Array.from({ length: 15 }, (_, i) => ({
         id: 25 + i + 1,
         date: today,
@@ -30,7 +27,6 @@ const initialMovements = [
         value: `R$ ${(50 + i * 2).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
         status: 'Confirmado',
     })),
-    // Transferências (10 of them)
     ...Array.from({ length: 10 }, (_, i) => ({
         id: 40 + i + 1,
         date: '21/09/2025',
@@ -42,7 +38,6 @@ const initialMovements = [
         value: `R$ ${(30 + i * 3).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
         status: 'Confirmado',
     })),
-    // Additional data for variety
     { id: 51, date: '15/01/2025', time: '09:30', type: 'Entrada', product: 'Paracetamol 500mg', quantity: 100, user: 'João Silva', value: 'R$ 250,00', status: 'Confirmado' },
     { id: 52, date: '15/01/2025', time: '08:15', type: 'Saída', product: 'Ibuprofeno 400mg', quantity: 50, user: 'Maria Santos', value: 'R$ 180,00', status: 'Pendente' },
     { id: 53, date: '14/01/2025', time: '16:45', type: 'Transferência', product: 'Dipirona 500mg', quantity: 25, user: 'Carlos Lima', value: 'R$ 75,00', status: 'Confirmado' },

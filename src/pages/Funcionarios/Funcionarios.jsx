@@ -4,7 +4,6 @@ import SideBar from '../SideBar/SideBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faUserCheck, faFingerprint, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 
-// Componente Counter
 const Counter = ({ end, duration = 2000 }) => {
   const [value, setValue] = useState(0);
   const animationFrameId = useRef(null);
@@ -81,7 +80,7 @@ const Funcionarios = () => {
   const totalEmployees = allEmployees.length;
   const activeEmployees = allEmployees.filter(emp => emp.status === 'Ativo').length;
   const configuredBiometry = allEmployees.filter(emp => emp.biometry === 'Configurado').length;
-  const newEmployeesThisMonth = 2; // Valor fixo para o exemplo
+  const newEmployeesThisMonth = 2; 
 
   return (
     <div className="dashboard-container">
@@ -143,7 +142,7 @@ const Funcionarios = () => {
           <div className="kpi-card">
             <div className="kpi-content">
               <FontAwesomeIcon icon={faFingerprint} />
-              <h3>Com Biometria</h3>
+              <h3>  Reconhecimento Facial</h3>
               <Counter end={configuredBiometry} duration={500} />
             </div>
           </div>

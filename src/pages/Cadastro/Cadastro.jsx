@@ -47,14 +47,12 @@ const Cadastro = () => {
     };
   }, []);
 
-  // Função para capturar a foto e simular o processamento
   const handleFacialCapture = () => {
     if (!cameraReady || facialStatus === 'capturing' || facialStatus === 'processing') return;
 
     setFacialStatus('capturing');
     console.log("Iniciando captura facial...");
 
-    // Simula a captura
     setTimeout(() => {
       setFacialStatus('processing');
       console.log("Captura bem-sucedida. Processando reconhecimento...");
@@ -96,7 +94,6 @@ const Cadastro = () => {
     return 'capture-button';
   };
 
-  // O cadastro agora sempre retorna sucesso, como solicitado
   async function cadastro(data) {
     await CadastroService.cadastro(data);
     console.log("Cadastro successful:", data);
@@ -105,13 +102,10 @@ const Cadastro = () => {
 
   async function handleCadastro (event) {
     if (nome === "" || sobrenome === "" || email === "" || usuario === "" || senha === "" || cargo === "") {
-      // Use a custom modal instead of alert()
       console.log("Por favor, preencha todos os campos obrigatórios.");
     } else if (!aceitouTermos) {
-      // Use a custom modal instead of alert()
       console.log("Você deve aceitar os termos e políticas de privacidade.");
     } else if (facialStatus !== 'success') {
-      // Use a custom modal instead of alert()
       console.log("Você deve capturar a foto do rosto para o cadastro.");
     } else {
       const data = {
@@ -123,11 +117,9 @@ const Cadastro = () => {
         cargo,
         facialData
       };
-      // A função 'cadastro' agora sempre retorna 'true'
       const result = await cadastro(data);
       if (result) {
         window.location.href = "/";
-        // Use a custom modal instead of alert()
         console.log("Cadastro realizado com sucesso! Por favor, faça o login.");
       }
     }

@@ -1,4 +1,3 @@
-/* --- Global Styles & Layout --- */
 :root {
   --background-color: #f0f2f5;
   --card-background: #ffffff;
@@ -21,8 +20,8 @@ body {
 .relatorios-page {
   display: flex;
   min-height: 100vh;
-  max-width: 1100px; /* Limita a largura máxima da página */
-  margin: 0 auto; /* Centraliza o conteúdo na tela */
+  max-width: 1100px; 
+  margin: 0 auto; 
 }
 
 .relatorios-content-wrapper {
@@ -45,7 +44,6 @@ body {
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* --- Header & Title Section --- */
 .relatorios-header {
   margin-bottom: 2rem;
 }
@@ -62,7 +60,6 @@ body {
   color: var(--text-color-secondary);
 }
 
-/* --- Loading and Error States --- */
 .loading-state-modern, .error-state {
   display: flex;
   flex-direction: column;
@@ -105,7 +102,6 @@ body {
   font-weight: 500;
 }
 
-/* --- Filter Section --- */
 .filters-section {
   margin-bottom: 2rem;
 }
@@ -152,7 +148,6 @@ body {
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
-/* --- Report Cards Section --- */
 .report-cards-section {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -263,7 +258,6 @@ body {
   background-color: var(--primary-hover);
 }
 
-/* --- Detailed Reports Section --- */
 .detailed-reports-section {
   margin-bottom: 2rem;
 }

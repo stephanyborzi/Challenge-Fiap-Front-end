@@ -2,11 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { FaUser, FaLock, FaCamera, FaSpinner, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import "./Login.css";
 
-// Simula um serviço de login que sempre retorna sucesso
 const LoginService = {
   login: async (data) => {
     console.log("Simulando login com dados:", data);
-    // Simula uma resposta de API bem-sucedida
     return { code: 200, message: "Login realizado com sucesso!" };
   }
 };
@@ -14,15 +12,12 @@ const LoginService = {
 const Login = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [facialStatus, setFacialStatus] = useState('idle'); // 'idle', 'capturing', 'processing', 'success', 'failure', 'camera-error'
-  const videoRef = useRef(null);
+  const [facialStatus, setFacialStatus] = useState('idle'); 
   const [cameraReady, setCameraReady] = useState(false);
   const [facialData, setFacialData] = useState(null);
   
-  // Estado para controlar a mensagem de feedback para o usuário
   const [message, setMessage] = useState(null);
 
-  // Efeito para iniciar a câmera quando o componente é montado
   useEffect(() => {
     const startCamera = async () => {
       try {
@@ -48,19 +43,16 @@ const Login = () => {
     };
   }, []);
 
-  // Função para capturar a foto e simular o processamento
   const handleFacialCapture = () => {
     if (!cameraReady || facialStatus === 'capturing' || facialStatus === 'processing') return;
     
     setFacialStatus('capturing');
     setMessage("Capturando foto...");
     
-    // Simula a captura
     setTimeout(() => {
       setFacialStatus('processing');
       setMessage("Analisando rosto...");
       
-      // Simula o reconhecimento facial
       setTimeout(() => {
         const canvas = document.createElement('canvas');
         canvas.width = videoRef.current.videoWidth;
@@ -73,11 +65,10 @@ const Login = () => {
         
         setFacialStatus('success');
         setMessage("Reconhecimento facial bem-sucedido!");
-      }, 2000); // Simula 2 segundos para o processamento
-    }, 1000); // Simula 1 segundo para a captura
+      }, 2000); 
+    }, 1000); 
   };
 
-  // Retorna o conteúdo do botão de captura
   const getButtonContent = () => {
     switch (facialStatus) {
       case 'capturing':
@@ -99,7 +90,6 @@ const Login = () => {
     return 'capture-button';
   };
   
-  // Função que lida com o login
   async function handleLogin(event) {
     event.preventDefault();
 
@@ -125,7 +115,6 @@ const Login = () => {
     if (result.code === 200) {
       console.log("Login bem-sucedido:", data);
       setMessage("Login realizado com sucesso!");
-      // Redireciona o usuário
       window.location.href = "/dashboard";
     }
   };

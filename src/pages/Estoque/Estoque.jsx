@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import './Estoque.css';
 import SideBar from '../SideBar/SideBar';
 
-// Componente Counter
 const Counter = ({ end, duration = 2000 }) => {
   const [value, setValue] = useState(0);
   const animationFrameId = useRef(null);
@@ -157,7 +156,7 @@ const Estoque = () => {
     const totalItems = filteredAndSortedMedicines.length;
     const itemsVencemEmBreve = filteredAndSortedMedicines.filter(m => m.status === 'Vencem em breve').length;
     const itemsEstoqueBaixo = filteredAndSortedMedicines.filter(m => m.status === 'Estoque baixo').length;
-    const totalValue = 45800; // Valor fixo para o exemplo
+    const totalValue = 45800; 
 
     return (
         <div className="dashboard-container">
@@ -189,7 +188,6 @@ const Estoque = () => {
                         </svg>
                         <div>
                             <h3>Total de Itens</h3>
-                            {/* Uso do componente Counter */}
                             <Counter end={totalItems} duration={500} />
                             <p>Em estoque</p>
                         </div>
@@ -202,7 +200,6 @@ const Estoque = () => {
                         </svg>
                         <div>
                             <h3>Próximos do Vencimento</h3>
-                            {/* Uso do componente Counter */}
                             <Counter end={itemsVencemEmBreve} duration={500} />
                             <p>Vencimento em até 30 dias</p>
                         </div>
@@ -217,7 +214,6 @@ const Estoque = () => {
                         </svg>
                         <div>
                             <h3>Estoque Crítico</h3>
-                            {/* Uso do componente Counter */}
                             <Counter end={itemsEstoqueBaixo} duration={500} />
                             <p>Abaixo do mínimo</p>
                         </div>
@@ -229,7 +225,6 @@ const Estoque = () => {
                         </svg>
                         <div>
                             <h3>Valor Total</h3>
-                            {/* Uso do componente Counter */}
                             <h2><Counter end={totalValue} duration={500} /></h2>
                             <p>Em estoque</p>
                         </div>

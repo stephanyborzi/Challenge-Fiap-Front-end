@@ -1,6 +1,4 @@
-/* ==================== */
-/* Variáveis e Base     */
-/* ==================== */
+
 :root {
   --primary-color: #3498db;
   --secondary-color: #2c3e50;
@@ -23,9 +21,6 @@ body {
     padding: 0;
 }
 
-/* ==================== */
-/* Layout Geral         */
-/* ==================== */
 .reconhecimentofacial-container {
     display: flex;
     min-height: 100vh;
@@ -36,7 +31,7 @@ body {
 .reconhecimento-main-content {
     flex-grow: 1;
     padding: 30px;
-    margin-left: 250px; /* Alinhar com a sidebar */
+    margin-left: 250px; 
 }
 
 .reconhecimento-content {
@@ -46,9 +41,6 @@ body {
     padding: 40px;
 }
 
-/* ==================== */
-/* Seção da Câmera      */
-/* ==================== */
 .recognition-area {
     display: flex;
     flex-direction: column;
@@ -90,7 +82,6 @@ body {
     transition: border-color 0.5s;
 }
 
-/* Animações e estados */
 .face-circle.capturing {
     border-color: var(--primary-color);
     animation: pulse 1.5s infinite ease-in-out;
@@ -111,7 +102,6 @@ body {
     animation: none;
 }
 
-/* Estilização para os campos de dados do funcionário */
 .employee-info-form {
     display: flex;
     flex-direction: column;
@@ -149,9 +139,6 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* ==================== */
-/* Botões de Ação       */
-/* ==================== */
 .action-buttons {
     display: flex;
     gap: 15px;
@@ -213,7 +200,6 @@ body {
     gap: 10px;
 }
 
-/* Status do Reconhecimento */
 .status-item {
     display: flex;
     align-items: center;
@@ -237,7 +223,6 @@ body {
     margin-top: 10px;
 }
 
-/* Lista de Instruções */
 .instruction-cards-container {
     display: flex;
     flex-direction: column;
@@ -308,9 +293,6 @@ body {
     flex-shrink: 0;
 }
 
-/* ==================== */
-/* Rodapé               */
-/* ==================== */
 .reconhecimento-footer {
     display: flex;
     justify-content: space-between;

@@ -8,8 +8,6 @@ const ReconhecimentoFacial = () => {
     const [infoMessage, setInfoMessage] = useState('Mantenha-se imóvel por 3 segundos para captura');
     const [lastResult, setLastResult] = useState(null);
     const [cameraReady, setCameraReady] = useState(false);
-    
-    // Estados para os dados do novo funcionário
     const [employeeName, setEmployeeName] = useState('');
     const [employeeId, setEmployeeId] = useState('');
 
@@ -44,7 +42,6 @@ const ReconhecimentoFacial = () => {
     }, []);
 
     const handleStartCapture = () => {
-        // Valida se os campos foram preenchidos
         if (!employeeName.trim() || !employeeId.trim()) {
             alert('Por favor, preencha o nome e o ID do funcionário.');
             return;
@@ -63,7 +60,7 @@ const ReconhecimentoFacial = () => {
             setInfoMessage('Analisando as características faciais...');
 
             setTimeout(() => {
-                const isSuccess = true; // Simulação de sucesso no cadastro
+                const isSuccess = true; 
                 if (isSuccess) {
                     setStatus('success');
                     setStatusMessage(`Seja bem-vindo(a), ${employeeName}!`);
