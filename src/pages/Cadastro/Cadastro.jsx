@@ -1,6 +1,7 @@
 import { FaUser, FaLock, FaSmile, FaCamera, FaSpinner, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { useState, useRef, useEffect } from "react";
 import "./Cadastro.css";
+import logo from "../../images/dasa_logo.png";
 const CadastroService = {
   cadastro: async (data) => {
     console.log("Simulating registration with data:", data);
@@ -128,11 +129,7 @@ const Cadastro = () => {
   return (
     <div className="container">
       <form onSubmit={(e) => { e.preventDefault(); handleCadastro(); }} className="login-form">
-        <img
-          src="src\images\dasa_logo.png"
-          alt="Logo"
-          className="logo"
-        />
+        <img src={logo} alt="Logo" className="logo-image" />
         <h1>Criar Conta</h1>
         <h3>Cadastre-se no ControlSystem</h3>
 

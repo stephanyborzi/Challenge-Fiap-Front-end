@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { FaUser, FaLock, FaCamera, FaSpinner, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import "./Login.css";
+import logo from "../../images/dasa_logo.png";
 
 const LoginService = {
   login: async (data) => {
@@ -122,11 +123,7 @@ const Login = () => {
   return (
     <div className="container">
       <form onSubmit={handleLogin} className="login-form">
-        <img
-          src="src\images\dasa_logo.png"
-          alt="Logo"
-          className="logo"
-        />
+        <img src={logo} alt="Logo" className="logo-image" />
         <h1>Bem-Vindo de Volta</h1>
         <h3>Faça login no ControlSystem</h3>
 
