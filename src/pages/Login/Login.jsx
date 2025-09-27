@@ -174,7 +174,7 @@ const Login = () => {
         {message && <div className="message-box">{message}</div>}
 
         <nav>
-          <a onClick={handleLogin} className="btn-link">Entrar</a>
+          <a href="/dashboard" className="btn-link">Entrar</a>
         </nav>
         
         <div className="separator">ou</div>

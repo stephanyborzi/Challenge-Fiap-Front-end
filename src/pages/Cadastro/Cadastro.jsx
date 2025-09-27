@@ -200,7 +200,7 @@ const Cadastro = () => {
           </label>
         </div>
         <nav>
-          <a onClick={(e) => handleCadastro()} className="btn-link">Cadastrar</a>
+          <a href="/" className="btn-link">Cadastrar</a>
       </nav>
         <div className="register">
           <span>Já tem uma conta?</span>
