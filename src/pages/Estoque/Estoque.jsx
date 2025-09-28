@@ -159,9 +159,9 @@ const Estoque = () => {
     const totalValue = 45800; 
 
     return (
-        <div className="dashboard-container">
+        <div className="estoque-container">
             <SideBar />
-            <main className="main-content">
+            <main className="estoque-main-content">
                 <header className="main-header">
                     <h1>Estoque</h1>
                     <p>Visão geral do almoxarifado</p>

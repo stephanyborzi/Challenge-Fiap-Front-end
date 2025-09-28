@@ -22,19 +22,12 @@
   --red-dark: #d13a3a;
 }
 
-.dashboard-container {
-  display: flex;
-  min-height: 100vh;
-  background-color: var(--background-light);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: var(--text-dark);
-}
-
-.main-content {
+.funcionario-content {
   flex: 1;
   padding: 30px;
   display: flex;
   flex-direction: column;
+  margin-left: 250px;
 }
 
 .employees-header {
@@ -334,9 +327,3 @@ tbody tr:hover {
   border-color: #c0c0c0; 
 }
 
-.dashboard-container {
-  height: 100vh;
-  margin-left: 140px;
-  display: center;
-  padding-left: 10px;
-}

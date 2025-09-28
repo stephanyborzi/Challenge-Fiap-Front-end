@@ -83,9 +83,9 @@ const Funcionarios = () => {
   const newEmployeesThisMonth = 2; 
 
   return (
-    <div className="dashboard-container">
+    <div className="funcionario-container">
       <SideBar />
-      <main className="main-content">
+      <main className="funcionario-content">
         <header className="main-header employees-header">
           <div className="header-text-content">
             <h1>Gerenciar Funcionários</h1>
@@ -162,7 +162,7 @@ const Funcionarios = () => {
                 <th>FUNCIONÁRIO</th>
                 <th>CARGO</th>
                 <th>DEPARTAMENTO</th>
-                <th>BIOMETRIA</th>
+                <th>RECONHECIMENTO FACIAL</th>
                 <th>STATUS</th>
               </tr>
             </thead>

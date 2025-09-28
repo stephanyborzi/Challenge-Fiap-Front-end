@@ -21,13 +21,6 @@ body {
     padding: 0;
 }
 
-.reconhecimentofacial-container {
-    display: flex;
-    min-height: 100vh;
-    background-color: var(--background-light);
-    color: var(--text-dark);
-}
-
 .reconhecimento-main-content {
     flex-grow: 1;
     padding: 30px;

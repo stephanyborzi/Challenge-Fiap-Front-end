@@ -15,7 +15,7 @@ import logo from "../../images/dasa_logo.png";
 
 const SideBar = () => {
   return (
-    <div className="dashboard-container">
+    <div className="teste-container">
       <aside className="sidebar">
         <img src={logo} alt="Logo" className="logo-image" />
         <div className="logo">ControlSystem</div>

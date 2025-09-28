@@ -170,7 +170,7 @@ const Movimentacoes = () => {
     const prevPage = () => setCurrentPage(prevPage => prevPage > 1 ? prevPage - 1 : prevPage);
 
     return (
-        <div className="dashboard-container">
+        <div className="movimentacao-container">
             <SideBar />
             <main className="movimentacoes-main-content">
                 <header className="movimentacoes-header">

@@ -120,4 +120,22 @@ ul {
   font-size: 12px;
 }
 
+.main-content {
+  /* Empurra o conteúdo para a direita, começando após a barra lateral de 250px */
+  margin-left: 250px; 
+  
+  /* Garante que o container ocupe toda a largura restante */
+  width: calc(100% - 250px);
+  
+  /* Adiciona padding interno */
+  padding: 20px; 
+  
+  /* Necessário para que o padding não aumente a largura total do elemento */
+  box-sizing: border-box;
+  
+  /* Garante que o conteúdo preencha a altura da tela */
+  min-height: 100vh;
+  background-color: var(--background-light); 
+
+}
 
