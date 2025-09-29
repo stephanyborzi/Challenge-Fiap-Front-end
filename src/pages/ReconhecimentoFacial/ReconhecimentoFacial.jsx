@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import './ReconhecimentoFacial.css';
 import SideBar from '../SideBar/SideBar';
 
+const API_URL = 'http://localhost:3001/api/register-face';
+
 const ReconhecimentoFacial = () => {
     const [status, setStatus] = useState('idle');
     const [statusMessage, setStatusMessage] = useState('Posicione seu rosto no círculo');
@@ -10,6 +12,7 @@ const ReconhecimentoFacial = () => {
     const [cameraReady, setCameraReady] = useState(false);
     const [employeeName, setEmployeeName] = useState('');
     const [employeeId, setEmployeeId] = useState('');
+    const [capturedImage, setCapturedImage] = useState(null);
 
     const videoRef = useRef(null);
 
@@ -21,6 +24,8 @@ const ReconhecimentoFacial = () => {
                     videoRef.current.srcObject = stream;
                     videoRef.current.play();
                     setCameraReady(true);
+                    videoRef.current.style.transform = 'scaleX(-1)';
+                    videoRef.current.style.objectFit = 'cover';
                 }
             } catch (err) {
                 console.error("Erro ao acessar a câmera: ", err);
@@ -41,8 +46,12 @@ const ReconhecimentoFacial = () => {
         };
     }, []);
 
-    const handleStartCapture = () => {
-        if (!employeeName.trim() || !employeeId.trim()) {
+
+    const handleStartCapture = async () => {
+        const name = employeeName.trim();
+        const id = employeeId.trim();
+
+        if (!name || !id) {
             alert('Por favor, preencha o nome e o ID do funcionário.');
             return;
         }
@@ -51,31 +60,74 @@ const ReconhecimentoFacial = () => {
 
         setStatus('capturing');
         setStatusMessage('Capturando...');
-        setInfoMessage(`Capturando o rosto de ${employeeName}. Não se mova.`);
+        setInfoMessage(`Capturando o rosto de ${name}. Não se mova.`);
         setLastResult(null);
 
-        setTimeout(() => {
-            setStatus('processing');
-            setStatusMessage('Processando...');
-            setInfoMessage('Analisando as características faciais...');
+        let imageData = null;
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
-            setTimeout(() => {
-                const isSuccess = true; 
-                if (isSuccess) {
-                    setStatus('success');
-                    setStatusMessage(`Seja bem-vindo(a), ${employeeName}!`);
-                    setInfoMessage('Reconhecimento facial cadastrado com sucesso.');
-                    setLastResult('success');
-                } else {
-                    setStatus('failure');
-                    setStatusMessage('Falha no Cadastro');
-                    setInfoMessage('Não foi possível capturar o rosto. Tente novamente.');
-                    setLastResult('failure');
-                }
-            }, 2000);
-        }, 3000);
+            const video = videoRef.current;
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth; 
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            
+            context.translate(canvas.width, 0);
+            context.scale(-1, 1);
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            imageData = canvas.toDataURL('image/jpeg', 0.9); 
+            setCapturedImage(imageData);
+
+        } catch (error) {
+            console.error("Erro ao capturar a imagem do canvas:", error);
+            setStatus('failure');
+            setStatusMessage('Falha na Captura.');
+            setInfoMessage('Erro ao processar a imagem da câmera.');
+            setLastResult('failure');
+            return;
+        }
+        setStatus('processing');
+        setStatusMessage('Processando...');
+        setInfoMessage('Enviando dados para o servidor...');
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    employeeId: id,
+                    employeeName: name,
+                    imageData: imageData, 
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setStatus('success');
+                setStatusMessage(`Sucesso: Cadastro concluído!`);
+                setInfoMessage(`Funcionário ${name} cadastrado. Bem-vindo(a)!`);
+                setLastResult('success');
+            } else {
+                setStatus('failure');
+                setStatusMessage('Falha no Cadastro');
+                setInfoMessage(`Erro: ${data.message || 'Verifique o servidor.'}`);
+                setLastResult('failure');
+            }
+        } catch (error) {
+            console.error('Erro na comunicação com a API:', error);
+            setStatus('failure');
+            setStatusMessage('Erro de Conexão');
+            setInfoMessage('Não foi possível conectar ao servidor de reconhecimento facial.');
+            setLastResult('failure');
+        }
     };
-
+    
+    // ... [A função handleRetry e outras funções permanecem as mesmas] ...
     const handleRetry = () => {
         setStatus('idle');
         setStatusMessage('Posicione seu rosto no círculo');
@@ -83,6 +135,7 @@ const ReconhecimentoFacial = () => {
         setLastResult(null);
         setEmployeeName('');
         setEmployeeId('');
+        setCapturedImage(null); // Limpa a imagem capturada
     };
 
     const getStatusDotClass = () => {
@@ -99,6 +152,8 @@ const ReconhecimentoFacial = () => {
         { text: 'Remova óculos escuros ou máscaras', icon: 'fas fa-mask' },
     ];
 
+
+    // *** RENDERIZAÇÃO JSX COM AJUSTES ***
     return (
         <div className="reconhecimentofacial-container">
             <SideBar />
@@ -110,7 +165,32 @@ const ReconhecimentoFacial = () => {
                 <div className="reconhecimento-content">
                     <div className="recognition-area">
                         <div className={`camera-view ${status}`}>
-                            <video ref={videoRef} className={`face-circle ${status}`} autoPlay playsInline muted></video>
+                            {/* O video é visível se não houver imagem capturada, ou se não for sucesso */}
+                            {(!capturedImage || status !== 'success') && (
+                                <video 
+                                    ref={videoRef} 
+                                    className={`face-circle ${status}`} 
+                                    autoPlay 
+                                    playsInline 
+                                    muted 
+                                >
+                                </video>
+                            )}
+                            {/* A imagem capturada é visível em caso de sucesso */}
+                            {capturedImage && status === 'success' && (
+                                <img 
+                                    src={capturedImage} 
+                                    alt="Rosto Capturado" 
+                                    className={`face-circle ${status}`} 
+                                    style={{
+                                        position: 'absolute',
+                                        width: '100%',
+                                        height: '100%',
+                                        borderRadius: '50%',
+                                        objectFit: 'cover',
+                                    }}
+                                />
+                            )}
                             <p className="camera-instruction">{statusMessage}</p>
                         </div>
                         <div className="action-buttons">
@@ -118,7 +198,7 @@ const ReconhecimentoFacial = () => {
                                 <button
                                     className="capture-button"
                                     onClick={handleStartCapture}
-                                    disabled={status === 'capturing' || status === 'processing' || !cameraReady}
+                                    disabled={status === 'capturing' || status === 'processing' || !cameraReady || !employeeName.trim() || !employeeId.trim()}
                                 >
                                     <i className="fas fa-camera"></i> {status === 'capturing' ? 'Capturando...' : status === 'processing' ? 'Processando...' : 'Iniciar Cadastro'}
                                 </button>
