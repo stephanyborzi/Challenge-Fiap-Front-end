@@ -23,7 +23,7 @@ const Counter = ({ end, duration = 2000 }) => {
 };
 
 const Dashboard = () => {
-  const [currentPage, setCurrentPage] = useState(1); 
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const productsPerPage = 5;
 
@@ -58,126 +58,137 @@ const Dashboard = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
+  
+  // O componente SideBar provavelmente está fora do dashboard-container.
+  // Vou criar um container pai (main-app-layout) para englobar SideBar e o Dashboard.
+  // Para manter a estrutura simples, vou ajustar as classes no CSS para que funcione.
 
   return (
-    <div className="dashboard-container">
-      <SideBar />
-      <main className="dashboard-main-content">
-        <header className="main-header">
-          <h1>Dashboard</h1>
-          <p>Visão geral do almoxarifado</p>
-          <form className="search-bar" onSubmit={handleSearch}>
-            <input
-              type="text"
-              placeholder="Buscar..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <button type="submit">Search</button>
-          </form>
-        </header>
-        <section className="kpi-section">
-          <div className="kpi-card">
-            <Package size={28} />
-            <div>
-              <h3>Total Produtos</h3>
-              <Counter end={1247} duration={500} />
-              <p>+12% este mês</p>
-            </div>
-          </div>
-          <div className="kpi-card attention">
-            <AlertTriangle size={28} />
-            <div>
-              <h3>Estoque Baixo</h3>
-              <Counter end={23} duration={500} />
-              <p>Requer atenção</p>
-            </div>
-          </div>
-          <div className="kpi-card">
-            <UserCheck size={28} />
-            <div>
-              <h3>Funcionários Ativos</h3>
-              <Counter end={156} duration={500} />
-              <p>+3 novos</p>
-            </div>
-          </div>
-          <div className="kpi-card">
-            <Activity size={28} />
-            <div>
-              <h3>Movimentações Hoje</h3>
-              <Counter end={89} duration={500} />
-              <p>45 entradas, 44 saídas</p>
-            </div>
-          </div>
-        </section>
+    <div className="main-app-layout">
+        {/* O SideBar deve ser um elemento irmão do container principal,
+            ou ele deve ser renderizado aqui dentro se você não o colocou 
+            em outro lugar no layout. Para o CSS funcionar, vou movê-lo para fora
+            do .dashboard-container, como no seu CSS original que usa margin-left: 250px.
+        */}
+        <SideBar /> 
+        <div className="dashboard-container">
+            <main className="dashboard-main-content">
+                <header className="main-header">
+                    <h1>Dashboard</h1>
+                    <p>Visão geral do almoxarifado</p>
+                    <form className="search-bar" onSubmit={handleSearch}>
+                        <input
+                            type="text"
+                            placeholder="Buscar..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        <button type="submit">Search</button>
+                    </form>
+                </header>
+                <section className="kpi-section">
+                    <div className="kpi-card">
+                        <Package size={28} />
+                        <div>
+                            <h3>Total Produtos</h3>
+                            <Counter end={1247} duration={500} />
+                            <p>+12% este mês</p>
+                        </div>
+                    </div>
+                    <div className="kpi-card attention">
+                        <AlertTriangle size={28} />
+                        <div>
+                            <h3>Estoque Baixo</h3>
+                            <Counter end={23} duration={500} />
+                            <p>Requer atenção</p>
+                        </div>
+                    </div>
+                    <div className="kpi-card">
+                        <UserCheck size={28} />
+                        <div>
+                            <h3>Funcionários Ativos</h3>
+                            <Counter end={156} duration={500} />
+                            <p>+3 novos</p>
+                        </div>
+                    </div>
+                    <div className="kpi-card">
+                        <Activity size={28} />
+                        <div>
+                            <h3>Movimentações Hoje</h3>
+                            <Counter end={89} duration={500} />
+                            <p>45 entradas, 44 saídas</p>
+                        </div>
+                    </div>
+                </section>
 
-        <section className="low-stock-products">
-          <h2>Produtos com Estoque Baixo</h2>
-          <table>
-            <thead>
-              <tr className='table-header'>
-                <th>PRODUTO</th>
-                <th>CÓDIGO</th>
-                <th>CATEGORIA</th>
-                <th>ESTOQUE ATUAL</th>
-                <th>MÍN. REQUERIDO</th>
-                <th>STATUS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentProducts.map((product, index) => (
-                <tr key={index}>
-                  <td>{product.name}</td>
-                  <td>{product.code}</td>
-                  <td>{product.category}</td>
-                  <td>{product.stock}</td>
-                  <td>{product.minStock}</td>
-                  <td className={product.stock <= product.minStock ? "status-critical" : ""}>
-                    {product.stock <= product.minStock ? "Crítico" : "Ok"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          
-          {totalPages > 0 && (
-            <div className="pagination">
-              <span className="pagination-info">
-                Mostrando {indexOfFirstProduct + 1} a {Math.min(indexOfLastProduct, filteredProducts.length)} de {filteredProducts.length} produtos
-              </span>
-              <div className="pagination-buttons">
-                <button
-                  className="pagination-btn"
-                  onClick={() => paginate(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  &lt;
-                </button>
-                {Array.from({ length: totalPages }, (_, index) => (
-                  <button
-                    key={index + 1}
-                    className={`pagination-btn ${currentPage === index + 1 ? 'active' : ''}`}
-                    onClick={() => paginate(index + 1)}
-                  >
-                    {index + 1}
-                  </button>
-                ))}
-                <button
-                  className="pagination-btn"
-                  onClick={() => paginate(currentPage + 1)}
-                  disabled={currentPage === totalPages}a
-                >
-                  &gt;
-                </button>
-              </div>
-            </div>
-          )}
-        </section>
-      </main>
+                <section className="low-stock-products">
+                    <h2>Produtos com Estoque Baixo</h2>
+                    <table>
+                        <thead>
+                            <tr className='table-header'>
+                                <th>PRODUTO</th>
+                                <th>CÓDIGO</th>
+                                <th>CATEGORIA</th>
+                                <th>ESTOQUE ATUAL</th>
+                                <th>MÍN. REQUERIDO</th>
+                                <th>STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentProducts.map((product, index) => (
+                                <tr key={index}>
+                                    <td>{product.name}</td>
+                                    <td>{product.code}</td>
+                                    <td>{product.category}</td>
+                                    <td>{product.stock}</td>
+                                    <td>{product.minStock}</td>
+                                    <td className={product.stock <= product.minStock ? "status-critical" : ""}>
+                                        {product.stock <= product.minStock ? "Crítico" : "Ok"}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    
+                    {totalPages > 0 && (
+                        <div className="pagination">
+                            <span className="pagination-info">
+                                Mostrando {indexOfFirstProduct + 1} a {Math.min(indexOfLastProduct, filteredProducts.length)} de {filteredProducts.length} produtos
+                            </span>
+                            <div className="pagination-buttons">
+                                <button
+                                    className="pagination-btn"
+                                    onClick={() => paginate(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                >
+                                    &lt;
+                                </button>
+                                {Array.from({ length: totalPages }, (_, index) => (
+                                    <button
+                                        key={index + 1}
+                                        className={`pagination-btn ${currentPage === index + 1 ? 'active' : ''}`}
+                                        onClick={() => paginate(index + 1)}
+                                    >
+                                        {index + 1}
+                                    </button>
+                                ))}
+                                <button
+                                    className="pagination-btn"
+                                    onClick={() => paginate(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                >
+                                    &gt;
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </section>
+            </main>
+        </div>
     </div>
   );
-};
+}; 
 
 export default Dashboard;
