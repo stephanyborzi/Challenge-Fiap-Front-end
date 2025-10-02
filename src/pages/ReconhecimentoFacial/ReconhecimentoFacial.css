@@ -23,7 +23,6 @@ body {
 .reconhecimentofacial-container {
     display: flex;
     min-height: 100vh;
-    background-color: var(--background-light);
     color: var(--text-dark);
 }
 

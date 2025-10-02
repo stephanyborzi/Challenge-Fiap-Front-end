@@ -13,7 +13,6 @@
 
 .estoque-container{
     flex: 1;
-    padding: 30px;
     display: flex;
     flex-direction: column;
     margin-left: 250px;
@@ -70,7 +69,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 5px;
 }
 
 .main-header h1 {
@@ -221,7 +219,7 @@
 .low-stock-products th,
 .low-stock-products td {
   text-align: left;
-  padding: 12px 0;
+  padding: 14px 0;
   border-bottom: 1px solid var(--border-color);
 }
 

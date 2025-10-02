@@ -2,61 +2,64 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import './Estoque.css';
 import SideBar from '../SideBar/SideBar';
 
-const Counter = ({ end, duration = 2000 }) => {
-  const [value, setValue] = useState(0);
-  const animationFrameId = useRef(null);
-
-  useEffect(() => {
-    let startTimestamp = null;
-    const step = (timestamp) => {
-      if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      setValue(Math.floor(progress * end));
-      if (progress < 1) {
-        animationFrameId.current = requestAnimationFrame(step);
-      }
-    };
+const allMedicines = [
+    // Laboratório 1
+    { id: 1, name: 'Paracetamol 500mg', code: 'MED001', category: 'Analgésicos e Antipiréticos', type: 'Medicamentos', expiration: '2026-05-15', lot: 'LOTE001', status: 'Normal', laboratory: "laboratorio1" },
+    { id: 2, name: 'Amoxicilina 875mg', code: 'MED002', category: 'Antibióticos', type: 'Medicamentos', expiration: '2024-11-20', lot: 'LOTE002', status: 'Vencem em breve', laboratory: "laboratorio1" },
+    { id: 3, name: 'Ibuprofeno 400mg', code: 'MED003', category: 'Anti-inflamatórios', type: 'Medicamentos', expiration: '2025-08-30', lot: 'LOTE003', status: 'Estoque baixo', laboratory: "laboratorio1" },
+    { id: 4, name: 'Dipirona 1g', code: 'MED004', category: 'Analgésicos e Antipiréticos', type: 'Medicamentos', expiration: '2026-02-10', lot: 'LOTE004', status: 'Normal', laboratory: "laboratorio1" },
+    { id: 5, name: 'Cefalexina 500mg', code: 'MED005', category: 'Antibióticos', type: 'Medicamentos', expiration: '2024-09-01', lot: 'LOTE005', status: 'Vencem em breve', laboratory: "laboratorio1" },
+    { id: 6, name: 'Losartana Potássica 50mg', code: 'MED006', category: 'Anti-hipertensivos', type: 'Medicamentos', expiration: '2025-10-25', lot: 'LOTE006', status: 'Normal', laboratory: "laboratorio1" },
+    { id: 7, name: 'Cetoconazol', code: 'MED007', category: 'Antifúngicos', type: 'Medicamentos', expiration: '2024-07-05', lot: 'LOTE007', status: 'Vencido', laboratory: "laboratorio1" },
+    { id: 8, name: 'Cloridrato de Propranolol', code: 'MED008', category: 'Anti-hipertensivos', type: 'Medicamentos', expiration: '2025-11-28', lot: 'LOTE008', status: 'Normal', laboratory: "laboratorio1" },
+    { id: 9, name: 'Nimesulida 100mg', code: 'MED009', category: 'Anti-inflamatórios', type: 'Medicamentos', expiration: '2026-03-01', lot: 'LOTE009', status: 'Normal', laboratory: "laboratorio1" },
+    { id: 10, name: 'Clindamicina 300mg', code: 'MED010', category: 'Antibióticos', type: 'Medicamentos', expiration: '2024-10-15', lot: 'LOTE010', status: 'Vencem em breve', laboratory: "laboratorio1" },
     
-    animationFrameId.current = requestAnimationFrame(step);
+    // Laboratório 2
+    { id: 11, name: 'Fluconazol 150mg', code: 'MED011', category: 'Antifúngicos', type: 'Medicamentos', expiration: '2025-04-22', lot: 'LOTE011', status: 'Estoque baixo', laboratory: "laboratorio2" },
+    { id: 12, name: 'AAS 100mg', code: 'MED012', category: 'Analgésicos e Antipiréticos', type: 'Medicamentos', expiration: '2024-06-01', lot: 'LOTE012', status: 'Vencido', laboratory: "laboratorio2" },
+    { id: 13, name: 'Omeprazol 20mg', code: 'MED013', category: 'Antiácido', type: 'Medicamentos', expiration: '2026-09-05', lot: 'LOTE013', status: 'Normal', laboratory: "laboratorio2" },
+    { id: 14, name: 'Sinvastatina 20mg', code: 'MED014', category: 'Hipolipemiante', type: 'Medicamentos', expiration: '2025-07-19', lot: 'LOTE014', status: 'Estoque baixo', laboratory: "laboratorio2" },
+    { id: 15, name: 'Captopril 25mg', code: 'MED015', category: 'Anti-hipertensivos', type: 'Medicamentos', expiration: '2026-01-12', lot: 'LOTE015', status: 'Normal', laboratory: "laboratorio2" },
+    { id: 16, name: 'Luva de Procedimento Estéril', code: 'ENF001', category: 'Luvas', type: 'Materiais de Enfermagem', expiration: '2027-03-20', lot: 'LOTE016', status: 'Normal', laboratory: "laboratorio2" },
+    { id: 17, name: 'Seringa Descartável 5ml', code: 'ENF002', category: 'Seringas', type: 'Materiais de Enfermagem', expiration: '2026-11-10', lot: 'LOTE017', status: 'Estoque baixo', laboratory: "laboratorio2" },
+    { id: 18, name: 'Bisturi Cirúrgico n.º 15', code: 'ENF003', category: 'Bisturis', type: 'Materiais de Enfermagem', expiration: '2028-05-01', lot: 'LOTE018', status: 'Normal', laboratory: "laboratorio2" },
+    { id: 19, name: 'Máscara Cirúrgica Tripla', code: 'ENF004', category: 'Equipamentos de Proteção', type: 'Materiais de Enfermagem', expiration: '2026-09-10', lot: 'LOTE019', status: 'Normal', laboratory: "laboratorio2" },
+    { id: 20, name: 'Gaze Estéril 7,5cm x 7,5cm', code: 'ENF005', category: 'Curativos e Gaze', type: 'Materiais de Enfermagem', expiration: '2025-12-25', lot: 'LOTE020', status: 'Normal', laboratory: "laboratorio2" },
+    { id: 21, name: 'Caneta Esferográfica Bic', code: 'ESC001', category: 'Canetas', type: 'Materiais de Escritório', expiration: '2030-01-01', lot: 'LOTE021', status: 'Normal', laboratory: "laboratorio2" },
+    { id: 22, name: 'Papel Sulfite A4 75g', code: 'ESC002', category: 'Papelaria', type: 'Materiais de Escritório', expiration: '2030-01-01', lot: 'LOTE022', status: 'Normal', laboratory: "laboratorio2" },
+    { id: 23, name: 'Calculadora de Mesa', code: 'ESC003', category: 'Eletrônicos', type: 'Materiais de Escritório', expiration: '2030-01-01', lot: 'LOTE023', status: 'Estoque baixo', laboratory: "laboratorio2" },
+    { id: 24, name: 'Grampeador', code: 'ESC004', category: 'Utensílios de Escritório', type: 'Materiais de Escritório', expiration: '2030-01-01', lot: 'LOTE024', status: 'Normal', laboratory: "laboratorio2" },
+];
 
-    return () => {
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
-    };
-  }, [end, duration]);
+const Counter = ({ end, duration = 2000 }) => {
+    const [value, setValue] = useState(0);
+    const animationFrameId = useRef(null);
 
-  return <h2>{value.toLocaleString()}</h2>;
+    useEffect(() => {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            setValue(Math.floor(progress * end));
+            if (progress < 1) {
+                animationFrameId.current = requestAnimationFrame(step);
+            }
+        };
+        
+        animationFrameId.current = requestAnimationFrame(step);
+
+        return () => {
+            if (animationFrameId.current) {
+                cancelAnimationFrame(animationFrameId.current);
+            }
+        };
+    }, [end, duration]);
+
+    return <h2>{value.toLocaleString()}</h2>;
 };
 
-const Estoque = () => {
-    const allMedicines = [
-        { id: 1, name: 'Paracetamol 500mg', code: 'MED001', category: 'Analgésicos e Antipiréticos', type: 'Medicamentos', expiration: '2026-05-15', lot: 'LOTE001', status: 'Normal' },
-        { id: 2, name: 'Amoxicilina 875mg', code: 'MED002', category: 'Antibióticos', type: 'Medicamentos', expiration: '2024-11-20', lot: 'LOTE002', status: 'Vencem em breve' },
-        { id: 3, name: 'Ibuprofeno 400mg', code: 'MED003', category: 'Anti-inflamatórios', type: 'Medicamentos', expiration: '2025-08-30', lot: 'LOTE003', status: 'Estoque baixo' },
-        { id: 4, name: 'Dipirona 1g', code: 'MED004', category: 'Analgésicos e Antipiréticos', type: 'Medicamentos', expiration: '2026-02-10', lot: 'LOTE004', status: 'Normal' },
-        { id: 5, name: 'Cefalexina 500mg', code: 'MED005', category: 'Antibióticos', type: 'Medicamentos', expiration: '2024-09-01', lot: 'LOTE005', status: 'Vencem em breve' },
-        { id: 6, name: 'Losartana Potássica 50mg', code: 'MED006', category: 'Anti-hipertensivos', type: 'Medicamentos', expiration: '2025-10-25', lot: 'LOTE006', status: 'Normal' },
-        { id: 7, name: 'Cetoconazol', code: 'MED007', category: 'Antifúngicos', type: 'Medicamentos', expiration: '2024-07-05', lot: 'LOTE007', status: 'Vencido' },
-        { id: 8, name: 'Cloridrato de Propranolol', code: 'MED008', category: 'Anti-hipertensivos', type: 'Medicamentos', expiration: '2025-11-28', lot: 'LOTE008', status: 'Normal' },
-        { id: 9, name: 'Nimesulida 100mg', code: 'MED009', category: 'Anti-inflamatórios', type: 'Medicamentos', expiration: '2026-03-01', lot: 'LOTE009', status: 'Normal' },
-        { id: 10, name: 'Clindamicina 300mg', code: 'MED010', category: 'Antibióticos', type: 'Medicamentos', expiration: '2024-10-15', lot: 'LOTE010', status: 'Vencem em breve' },
-        { id: 11, name: 'Fluconazol 150mg', code: 'MED011', category: 'Antifúngicos', type: 'Medicamentos', expiration: '2025-04-22', lot: 'LOTE011', status: 'Estoque baixo' },
-        { id: 12, name: 'AAS 100mg', code: 'MED012', category: 'Analgésicos e Antipiréticos', type: 'Medicamentos', expiration: '2024-06-01', lot: 'LOTE012', status: 'Vencido' },
-        { id: 13, name: 'Omeprazol 20mg', code: 'MED013', category: 'Antiácido', type: 'Medicamentos', expiration: '2026-09-05', lot: 'LOTE013', status: 'Normal' },
-        { id: 14, name: 'Sinvastatina 20mg', code: 'MED014', category: 'Hipolipemiante', type: 'Medicamentos', expiration: '2025-07-19', lot: 'LOTE014', status: 'Estoque baixo' },
-        { id: 15, name: 'Captopril 25mg', code: 'MED015', category: 'Anti-hipertensivos', type: 'Medicamentos', expiration: '2026-01-12', lot: 'LOTE015', status: 'Normal' },
-        { id: 16, name: 'Luva de Procedimento Estéril', code: 'ENF001', category: 'Luvas', type: 'Materiais de Enfermagem', expiration: '2027-03-20', lot: 'LOTE016', status: 'Normal' },
-        { id: 17, name: 'Seringa Descartável 5ml', code: 'ENF002', category: 'Seringas', type: 'Materiais de Enfermagem', expiration: '2026-11-10', lot: 'LOTE017', status: 'Estoque baixo' },
-        { id: 18, name: 'Bisturi Cirúrgico n.º 15', code: 'ENF003', category: 'Bisturis', type: 'Materiais de Enfermagem', expiration: '2028-05-01', lot: 'LOTE018', status: 'Normal' },
-        { id: 19, name: 'Máscara Cirúrgica Tripla', code: 'ENF004', category: 'Equipamentos de Proteção', type: 'Materiais de Enfermagem', expiration: '2026-09-10', lot: 'LOTE019', status: 'Normal' },
-        { id: 20, name: 'Gaze Estéril 7,5cm x 7,5cm', code: 'ENF005', category: 'Curativos e Gaze', type: 'Materiais de Enfermagem', expiration: '2025-12-25', lot: 'LOTE020', status: 'Normal' },
-        { id: 21, name: 'Caneta Esferográfica Bic', code: 'ESC001', category: 'Canetas', type: 'Materiais de Escritório', expiration: '2030-01-01', lot: 'LOTE021', status: 'Normal' },
-        { id: 22, name: 'Papel Sulfite A4 75g', code: 'ESC002', category: 'Papelaria', type: 'Materiais de Escritório', expiration: '2030-01-01', lot: 'LOTE022', status: 'Normal' },
-        { id: 23, name: 'Calculadora de Mesa', code: 'ESC003', category: 'Eletrônicos', type: 'Materiais de Escritório', expiration: '2030-01-01', lot: 'LOTE023', status: 'Estoque baixo' },
-        { id: 24, name: 'Grampeador', code: 'ESC004', category: 'Utensílios de Escritório', type: 'Materiais de Escritório', expiration: '2030-01-01', lot: 'LOTE024', status: 'Normal' },
-    ];
-
+const Estoque = ({ currentLab = 'todos', onLabChange }) => {
     const [typeFilter, setTypeFilter] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
@@ -65,9 +68,17 @@ const Estoque = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const medicinesPerPage = 5;
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [currentLab]);
+
     const filteredAndSortedMedicines = useMemo(() => {
         let filtered = [...allMedicines];
 
+        if (currentLab && currentLab !== 'todos') {
+            filtered = filtered.filter(item => item.laboratory === currentLab);
+        }
+        
         if (typeFilter) {
             filtered = filtered.filter(item => item.type === typeFilter);
         }
@@ -106,12 +117,11 @@ const Estoque = () => {
         });
 
         return filtered;
-    }, [allMedicines, typeFilter, categoryFilter, statusFilter, sortBy, searchQuery]);
+    }, [currentLab, typeFilter, categoryFilter, statusFilter, sortBy, searchQuery]);
 
     const indexOfLastMedicine = currentPage * medicinesPerPage;
     const indexOfFirstMedicine = indexOfLastMedicine - medicinesPerPage;
     const currentMedicines = filteredAndSortedMedicines.slice(indexOfFirstMedicine, indexOfLastMedicine);
-
     const totalPages = Math.ceil(filteredAndSortedMedicines.length / medicinesPerPage);
 
     const paginate = (pageNumber) => {
@@ -126,8 +136,15 @@ const Estoque = () => {
             .map(item => item.category);
         return [...new Set(categories)];
     };
-
     const availableCategories = getCategoriesByType(typeFilter);
+    const totalItems = filteredAndSortedMedicines.length;
+    const itemsVencemEmBreve = filteredAndSortedMedicines.filter(m => m.status === 'Vencem em breve').length;
+    const itemsEstoqueBaixo = filteredAndSortedMedicines.filter(m => m.status === 'Estoque baixo').length;
+    const totalValue = 45800; 
+    
+    const formattedLabName = currentLab === 'todos' 
+        ? 'Todos os Laboratórios' 
+        : currentLab.replace('laboratorio', 'Laboratório ');
 
     const renderPageNumbers = () => {
         const pageNumbers = [];
@@ -153,20 +170,15 @@ const Estoque = () => {
         return pageNumbers;
     };
 
-    const totalItems = filteredAndSortedMedicines.length;
-    const itemsVencemEmBreve = filteredAndSortedMedicines.filter(m => m.status === 'Vencem em breve').length;
-    const itemsEstoqueBaixo = filteredAndSortedMedicines.filter(m => m.status === 'Estoque baixo').length;
-    const totalValue = 45800; 
 
     return (
         <div className="estoque-container">
-            <SideBar />
+            <SideBar currentLab={currentLab} onLabChange={onLabChange} />
             <main className="estoque-main-content">
                 <header className="main-header">
                     <h1>Estoque</h1>
-                    <p>Visão geral do almoxarifado</p>
+                    <p>Visão geral do almoxarifado  </p>
                     <div className="search-bar">
-                        <button>Adicionar Itens</button>
                         <input
                             type="text"
                             placeholder="Buscar..."
@@ -177,15 +189,10 @@ const Estoque = () => {
                             }}
                         />
                     </div>
-                </header>
+                </header>               
                 <section className="kpi-section">
                     <div className="kpi-card">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M21 8H3" />
-                            <path d="M10 12v-2a3 3 0 0 1 3-3h1a3 3 0 0 1 3 3v2" />
-                            <path d="M3 10v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1a2 2 0 0 1-2-2v-1" />
-                            <path d="M12 2v2" />
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 8H3" /><path d="M10 12v-2a3 3 0 0 1 3-3h1a3 3 0 0 1 3 3v2" /><path d="M3 10v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1a2 2 0 0 1-2-2v-1" /><path d="M12 2v2" /></svg>
                         <div>
                             <h3>Total de Itens</h3>
                             <Counter end={totalItems} duration={500} />
@@ -193,11 +200,7 @@ const Estoque = () => {
                         </div>
                     </div>
                     <div className="kpi-card attention">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                            <line x1="12" y1="9" x2="12" y2="13" />
-                            <line x1="12" y1="17" x2="12" y2="17" />
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12" y2="17" /></svg>
                         <div>
                             <h3>Próximos do Vencimento</h3>
                             <Counter end={itemsVencemEmBreve} duration={500} />
@@ -205,13 +208,7 @@ const Estoque = () => {
                         </div>
                     </div>
                     <div className="kpi-card">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                            <path d="M14 2v6h6" />
-                            <path d="M10 15h4" />
-                            <path d="M10 18h4" />
-                            <path d="M10 12h4" />
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /><path d="M10 15h4" /><path d="M10 18h4" /><path d="M10 12h4" /></svg>
                         <div>
                             <h3>Estoque Crítico</h3>
                             <Counter end={itemsEstoqueBaixo} duration={500} />
@@ -219,17 +216,14 @@ const Estoque = () => {
                         </div>
                     </div>
                     <div className="kpi-card">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="12" y1="1" x2="12" y2="23" />
-                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
                         <div>
                             <h3>Valor Total</h3>
                             <h2><Counter end={totalValue} duration={500} /></h2>
                             <p>Em estoque</p>
                         </div>
                     </div>
-                </section>
+                </section>                
                 <section className="medicine-filter-section">
                     <label>
                         <label htmlFor="type-filter">Tipo de Material</label>
@@ -312,7 +306,7 @@ const Estoque = () => {
                                 <th>CÓDIGO</th>
                                 <th>CATEGORIA</th>
                                 <th>VALIDADE</th>
-                                <th>LOTE</th>
+                                <th>LOTE</th> 
                                 <th>STATUS</th>
                             </tr>
                         </thead>
@@ -329,6 +323,9 @@ const Estoque = () => {
                                     </td>
                                 </tr>
                             ))}
+                            {filteredAndSortedMedicines.length === 0 && (
+                                <tr><td colSpan="7" style={{ textAlign: 'center', padding: '15px' }}>Nenhum item encontrado com os filtros atuais.</td></tr>
+                            )}
                         </tbody>
                     </table>
 
@@ -342,25 +339,19 @@ const Estoque = () => {
                                     className="pagination-btn"
                                     onClick={() => paginate(currentPage - 1)}
                                     disabled={currentPage === 1}
-                                >
-                                    &lt;
-                                </button>
+                                >&lt;</button>
                                 {renderPageNumbers().map((number) => (
                                     <button
                                         key={number}
                                         className={`pagination-btn ${currentPage === number ? 'active' : ''}`}
                                         onClick={() => paginate(number)}
-                                    >
-                                        {number}
-                                    </button>
+                                    >{number}</button>
                                 ))}
                                 <button
                                     className="pagination-btn"
                                     onClick={() => paginate(currentPage + 1)}
                                     disabled={currentPage === totalPages}
-                                >
-                                    &gt;
-                                </button>
+                                >&gt;</button>
                             </div>
                         </div>
                     )}

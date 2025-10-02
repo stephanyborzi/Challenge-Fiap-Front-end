@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react'; 
 import { Link } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -9,17 +9,39 @@ import {
   BarChart2,
   User,
   Settings,
+  FlaskConical, 
 } from "lucide-react";
 import './SideBar.css';
 import logo from "../../images/dasa_logo.png";
 
-const SideBar = () => {
+const SideBar = ({ onLabChange }) => { 
+  const [selectedLab, setSelectedLab] = useState('laboratorio1'); 
+
+  const handleLabChange = (event) => {
+    const newLab = event.target.value;
+    setSelectedLab(newLab);
+    if (onLabChange) {
+      onLabChange(newLab);
+    }
+  };
+
   return (
     <div className="teste-container">
       <aside className="sidebar">
         <img src={logo} alt="Logo" className="logo-image" />
         <div className="logo">ControlSystem</div>
-
+        <div className="lab-filter-container">
+      <label htmlFor="lab-select">Unidades</label>
+        <select 
+          id="lab-select" 
+          className="lab-select"
+          value={selectedLab}
+          onChange={handleLabChange} 
+        >
+          <option value="laboratorio1">Laboratório 1</option>
+          <option value="laboratorio2">Laboratório 2</option>
+        </select>
+      </div>
         <nav className="nav-menu">
           <ul>
             <li className="active">
@@ -54,7 +76,6 @@ const SideBar = () => {
             </li>
           </ul>
         </nav>
-
         <div className="user-profile">
           <User size={40} />
           <div className="user-info">

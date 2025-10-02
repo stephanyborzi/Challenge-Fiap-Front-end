@@ -3,7 +3,6 @@ import SideBar from '../SideBar/SideBar';
 import './Movimentacoes.css';
 
 const today = '22/09/2025';
-
 const initialMovements = [
     ...Array.from({ length: 25 }, (_, i) => ({
         id: i + 1,
@@ -15,37 +14,48 @@ const initialMovements = [
         user: `User Entrada ${i + 1}`,
         value: `R$ ${(100 + i * 5).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
         status: 'Confirmado',
+        laboratory: 'laboratorio1', 
     })),
-    ...Array.from({ length: 15 }, (_, i) => ({
+    ...Array.from({ length: 10 }, (_, i) => ({
         id: 25 + i + 1,
         date: today,
         time: `10:${(i + 1).toString().padStart(2, '0')}`,
         type: 'Saída',
         product: `Produto Saída ${i + 1}`,
         quantity: 20 + i,
-        user: `User Saída ${i + 1}`,
+        user: `User Saída  ${i + 1}`,
         value: `R$ ${(50 + i * 2).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
         status: 'Confirmado',
+        laboratory: 'laboratorio1',
+    })),
+    
+    ...Array.from({ length: 5 }, (_, i) => ({
+        id: 35 + i + 1,
+        date: today,
+        time: `11:${(i + 1).toString().padStart(2, '0')}`,
+        type: 'Saída',
+        product: `Produto Saída L2 ${i + 1}`,
+        quantity: 15 + i,
+        user: `User Saída L2 ${i + 1}`,
+        value: `R$ ${(70 + i * 3).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        status: 'Confirmado',
+        laboratory: 'laboratorio2',
     })),
     ...Array.from({ length: 10 }, (_, i) => ({
         id: 40 + i + 1,
         date: '21/09/2025',
         time: `14:${(i + 1).toString().padStart(2, '0')}`,
         type: 'Transferência',
-        product: `Produto Transferência ${i + 1}`,
+        product: `Produto Transf. ${i + 1}`,
         quantity: 10 + i,
-        user: `User Transferência ${i + 1}`,
+        user: `User Transf. ${i + 1}`,
         value: `R$ ${(30 + i * 3).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
         status: 'Confirmado',
+        laboratory: 'laboratorio1', 
     })),
-    { id: 51, date: '15/01/2025', time: '09:30', type: 'Entrada', product: 'Paracetamol 500mg', quantity: 100, user: 'João Silva', value: 'R$ 250,00', status: 'Confirmado' },
-    { id: 52, date: '15/01/2025', time: '08:15', type: 'Saída', product: 'Ibuprofeno 400mg', quantity: 50, user: 'Maria Santos', value: 'R$ 180,00', status: 'Pendente' },
-    { id: 53, date: '14/01/2025', time: '16:45', type: 'Transferência', product: 'Dipirona 500mg', quantity: 25, user: 'Carlos Lima', value: 'R$ 75,00', status: 'Confirmado' },
-    { id: 54, date: '14/01/2025', time: '10:00', type: 'Entrada', product: 'Omeprazol 20mg', quantity: 200, user: 'Ana Paula', value: 'R$ 400,00', status: 'Confirmado' },
-    { id: 55, date: '13/01/2025', time: '14:20', type: 'Saída', product: 'Amoxicilina 500mg', quantity: 75, user: 'Pedro Costa', value: 'R$ 250,00', status: 'Confirmado' },
 ];
 
-const Movimentacoes = () => {
+const Movimentacoes = ({ currentLab = 'todos', onLabChange }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5);
     const [searchTerm, setSearchTerm] = useState('');
@@ -58,6 +68,10 @@ const Movimentacoes = () => {
     const [animatedTransferencias, setAnimatedTransferencias] = useState(0);
     const [animatedValorTotal, setAnimatedValorTotal] = useState(0);
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [currentLab]);
+    
     const formatDate = (dateString) => {
         if (!dateString) return '';
         const [year, month, day] = dateString.split('-');
@@ -94,11 +108,15 @@ const Movimentacoes = () => {
 
     useEffect(() => {
         const today = new Date().toLocaleDateString('pt-BR');
+        const labFilteredMovements = currentLab === 'todos' 
+            ? movements 
+            : movements.filter(mov => mov.laboratory === currentLab);
 
-        const totalEntradas = movements.filter(mov => mov.type === 'Entrada' && mov.date === today).length;
-        const totalSaidas = movements.filter(mov => mov.type === 'Saída' && mov.date === today).length;
-        const totalTransferencias = movements.filter(mov => mov.type === 'Transferência').length;
-        const totalValor = movements.reduce((sum, mov) => {
+        const totalEntradas = labFilteredMovements.filter(mov => mov.type === 'Entrada' && mov.date === today).length;
+        const totalSaidas = labFilteredMovements.filter(mov => mov.type === 'Saída' && mov.date === today).length;
+        const totalTransferencias = labFilteredMovements.filter(mov => mov.type === 'Transf.').length;
+        
+        const totalValor = labFilteredMovements.reduce((sum, mov) => {
             const value = parseFloat(mov.value.replace('R$', '').replace(',', '.'));
             return sum + (isNaN(value) ? 0 : value);
         }, 0);
@@ -107,7 +125,7 @@ const Movimentacoes = () => {
         animateCounter(setAnimatedSaidas, totalSaidas);
         animateCounter(setAnimatedTransferencias, totalTransferencias);
         animateValueCounter(setAnimatedValorTotal, totalValor);
-    }, [movements]);
+    }, [movements, currentLab]); 
 
     const handleExport = () => {
         const table = document.querySelector('table');
@@ -133,7 +151,11 @@ const Movimentacoes = () => {
     };
 
     const filteredMovements = useMemo(() => {
-        return movements.filter(mov => {
+        let filtered = movements;
+        if (currentLab && currentLab !== 'todos') {
+            filtered = filtered.filter(mov => mov.laboratory === currentLab);
+        }
+        return filtered.filter(mov => {
             const matchesSearch = searchTerm.trim() === '' ||
                 mov.product.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 mov.user.toLowerCase().includes(searchTerm.toLowerCase());
@@ -145,7 +167,7 @@ const Movimentacoes = () => {
 
             return matchesSearch && matchesType && matchesDate;
         });
-    }, [movements, searchTerm, movementType, filterDate]);
+    }, [movements, searchTerm, movementType, filterDate, currentLab]); 
 
     const lastItemIndex = currentPage * itemsPerPage;
     const firstItemIndex = lastItemIndex - itemsPerPage;
@@ -168,15 +190,19 @@ const Movimentacoes = () => {
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
     const nextPage = () => setCurrentPage(prevPage => prevPage < totalPages ? prevPage + 1 : prevPage);
     const prevPage = () => setCurrentPage(prevPage => prevPage > 1 ? prevPage - 1 : prevPage);
+    
+    const formattedLabName = currentLab === 'todos' 
+        ? 'Todos os Laboratórios' 
+        : currentLab.replace('laboratorio', 'Laboratório ');
 
     return (
         <div className="movimentacao-container">
-            <SideBar />
+            <SideBar currentLab={currentLab} onLabChange={onLabChange} />
             <main className="movimentacoes-main-content">
                 <header className="movimentacoes-header">
                     <div className="movimentacoes-title-group">
                         <h1>Movimentações</h1>
-                        <p>Controle de entrada e saída de medicamentos</p>
+                        <p>Controle de entrada e saída de medicamentos </p>
                     </div>
                 </header>
 
@@ -205,7 +231,7 @@ const Movimentacoes = () => {
                                 <option value="">Tipo de Movimento</option>
                                 <option value="Entrada">Entrada</option>
                                 <option value="Saída">Saída</option>
-                                <option value="Transferência">Transferência</option>
+                                <option value="Transferência">Transf.</option>
                             </select>
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -270,7 +296,7 @@ const Movimentacoes = () => {
                             </svg>
                         </div>
                         <div>
-                            <h3>Transferências</h3>
+                            <h3>Transf.</h3>
                             <h2>{animatedTransferencias}</h2>
                         </div>
                     </div>
@@ -329,7 +355,7 @@ const Movimentacoes = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="7">
+                                    <td colSpan="8"> 
                                         <div className="no-results-message">
                                             Nenhuma movimentação encontrada.
                                         </div>

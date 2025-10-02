@@ -76,7 +76,7 @@ ul {
 
 .sidebar .nav-menu li:hover a,
 .sidebar .nav-menu li.active a {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--background-light);
   border-left: 4px solid var(--secondary-color);
   padding-left: 21px;
 }
@@ -121,21 +121,52 @@ ul {
 }
 
 .main-content {
-  /* Empurra o conteúdo para a direita, começando após a barra lateral de 250px */
   margin-left: 250px; 
-  
-  /* Garante que o container ocupe toda a largura restante */
   width: calc(100% - 250px);
-  
-  /* Adiciona padding interno */
   padding: 20px; 
-  
-  /* Necessário para que o padding não aumente a largura total do elemento */
   box-sizing: border-box;
-  
-  /* Garante que o conteúdo preencha a altura da tela */
   min-height: 100vh;
   background-color: var(--background-light); 
 
 }
+
+.lab-filter-container {
+  padding: 15px 20px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: white; 
+  font-size: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px; 
+}
+
+.lab-filter-container label {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.lab-select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--secondary-color);
+  background-color: var(--primary-color); 
+  color: white; 
+  appearance: none; 
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.lab-select:focus {
+  outline: none;
+  border-color: #007bff; 
+}
+
+.settings-link{ 
+  margin-left: 30px;
+}
+
 
