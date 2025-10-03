@@ -296,7 +296,7 @@ const Relatorios = ({ currentLab = 'todos', onLabChange }) => {
                     <section className="report-cards-section">
                         <div className="report-card card">
                             <div className="report-card-header">
-                                <h3>Resumo de Estoque ({selectedCategory})</h3>
+                                <h3>Resumo de Estoque </h3>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M18 10h-1.26a2 2 2 0 0-1.74 1.25L14 14l-1.25-2.75A2 2 0 0 0 11.01 10H10a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zM4 14a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2zM20 14a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2z"></path>
                                 </svg>
@@ -324,7 +324,7 @@ const Relatorios = ({ currentLab = 'todos', onLabChange }) => {
 
                         <div className="report-card card">
                             <div className="report-card-header">
-                                <h3>Resumo Financeiro ({selectedCategory})</h3>
+                                <h3>Resumo Financeiro</h3>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M18 20V10M12 20V4M6 20V14"></path>
                                 </svg>
@@ -369,7 +369,7 @@ const Relatorios = ({ currentLab = 'todos', onLabChange }) => {
 
                         <div className="detailed-report-table card" id="stock-items-table">
                             <div className="table-header">
-                                <h3>Itens em Estoque ({formattedLabName})</h3>
+                                <h3>Itens em Estoque</h3>
                                 <div className="header-actions">
                                     <button className="export-table-btn" onClick={exportStockItems}>Exportar itens em Estoque </button>
                                 </div>
@@ -384,7 +384,6 @@ const Relatorios = ({ currentLab = 'todos', onLabChange }) => {
                                         <th>Valor Unitário</th>
                                         <th>Valor Total</th>
                                         <th>Localização</th>
-                                        <th>Laboratório</th> {/* Adicionada coluna */}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -397,7 +396,6 @@ const Relatorios = ({ currentLab = 'todos', onLabChange }) => {
                                             <td>{formatCurrency(item.unitPrice)}</td>
                                             <td>{formatCurrency(item.currentStock * item.unitPrice)}</td>
                                             <td>{item.location}</td>
-                                            <td>{item.laboratory === 'laboratorio1' ? 'Laboratório 1' : 'Laboratório 2'}</td> {/* Renderiza o Laboratório */}
                                         </tr>
                                     ))}
                                 </tbody>
@@ -406,7 +404,7 @@ const Relatorios = ({ currentLab = 'todos', onLabChange }) => {
 
                         <div className="detailed-report-table card mt-4" id="movements-table">
                             <div className="table-header">
-                                <h3>Histórico de Movimentações (Filtrado)</h3>
+                                <h3>Histórico de Movimentações</h3>
                                 <div className="table-actions">
                                     <button className="export-table-btn" onClick={exportMovements}>Exportar CSV</button>
                                 </div>
@@ -423,7 +421,6 @@ const Relatorios = ({ currentLab = 'todos', onLabChange }) => {
                                         <th>Motivo</th>
                                         <th>Responsável</th>
                                         <th>Fornecedor</th>
-                                        <th>Laboratório</th> {/* Adicionada coluna */}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -443,7 +440,6 @@ const Relatorios = ({ currentLab = 'todos', onLabChange }) => {
                                                 <td>{movement.reason}</td>
                                                 <td>{movement.responsible || 'N/A'}</td>
                                                 <td>{supplierName}</td>
-                                                <td>{item?.laboratory === 'laboratorio1' ? 'Laboratório 1' : item?.laboratory === 'laboratorio2' ? 'Laboratório 2' : 'N/A'}</td> {/* Renderiza o Laboratório */}
                                             </tr>
                                         );
                                     })}
