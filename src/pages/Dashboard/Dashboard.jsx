@@ -110,7 +110,6 @@ const Dashboard = ({ currentLab = 'todos', onLabChange }) => {
   return (
     <div className="dashboard-container">
       <SideBar currentLab={currentLab} onLabChange={onLabChange} /> 
-      
       <main className="dashboard-main-content">
         <header className="main-header">
           <h1>Dashboard</h1>
@@ -164,13 +163,12 @@ const Dashboard = ({ currentLab = 'todos', onLabChange }) => {
           <h2>Produtos com Estoque Baixo</h2>
           <table>
             <thead>
-              <tr className='table-header'>
+              <tr className>
                 <th>PRODUTO</th>
                 <th>CÓDIGO</th>
                 <th>CATEGORIA</th>
                 <th>ESTOQUE ATUAL</th>
                 <th>MÍN. REQUERIDO</th>
-                <th>LABORATÓRIO</th> 
                 <th>STATUS</th>
               </tr>
             </thead>
@@ -182,7 +180,6 @@ const Dashboard = ({ currentLab = 'todos', onLabChange }) => {
                   <td>{product.category}</td>
                   <td>{product.stock}</td>
                   <td>{product.minStock}</td>
-                  <td>{product.laboratory === 'laboratorio1' ? 'L1' : 'L2'}</td> 
                   <td className={product.stock <= product.minStock ? "status-critical" : "status-ok"}>
                     {product.stock <= product.minStock ? "Crítico" : "Ok"}
                   </td>
